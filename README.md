@@ -1,3 +1,5 @@
+<img src="https://raw.githubusercontent.com/krzema12/GeocachingToolbox/master/Working/Logo/Logo-V2.png" height="300">
+
 # GeocachingToolbox
 A .NET library for interfacing geocaching services.
 
