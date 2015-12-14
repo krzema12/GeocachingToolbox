@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{180C45B3-15D5-4154-AAA3-C96C666039A5}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GeocachingToolbox</RootNamespace>
+    <AssemblyName>GeocachingToolbox</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="HtmlAgilityPack">
+      <HintPath>..\packages\HtmlAgilityPack.1.4.9\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Client.cs" />
+    <Compile Include="Exceptions.cs" />
+    <Compile Include="Geocache.cs" />
+    <Compile Include="GeocacheLogType.cs" />
+    <Compile Include="GeocacheSize.cs" />
+    <Compile Include="GeocacheStatus.cs" />
+    <Compile Include="GeocacheType.cs" />
+    <Compile Include="GeocachingCom\GCClient.cs" />
+    <Compile Include="GeocachingCom\GCConnector.cs" />
+    <Compile Include="GeocachingCom\GCGeocache.cs" />
+    <Compile Include="GeocachingCom\GCLog.cs" />
+    <Compile Include="GeocachingCom\GCTrackable.cs" />
+    <Compile Include="GeocachingCom\GCUser.cs" />
+    <Compile Include="GeocachingCom\ROT13Coder.cs" />
+    <Compile Include="GeocachingCom\TrackableNotFoundException.cs" />
+    <Compile Include="ILoggable.cs" />
+    <Compile Include="Log.cs" />
+    <Compile Include="GeocachingCom\WebBrowserSimulator.cs" />
+    <Compile Include="GeocachingCom\IGCConnector.cs" />
+    <Compile Include="Location.cs" />
+    <Compile Include="Opencaching\AccessTokenStore.cs" />
+    <Compile Include="Opencaching\ApiAccessKeys.cs" />
+    <Compile Include="Opencaching\IAccessTokenStore.cs" />
+    <Compile Include="Opencaching\OAuthBase.cs" />
+    <Compile Include="Opencaching\IOCConnector.cs" />
+    <Compile Include="Opencaching\OCClient.cs" />
+    <Compile Include="Opencaching\OCConnector.cs" />
+    <Compile Include="Opencaching\OCGeocache.cs" />
+    <Compile Include="Opencaching\OCLog.cs" />
+    <Compile Include="Opencaching\OCUser.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Opencaching\UrlParser.cs" />
+    <Compile Include="TextComparisonTools.cs" />
+    <Compile Include="Trackable.cs" />
+    <Compile Include="TrackableLogType.cs" />
+    <Compile Include="User.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Class diagrams\Client.cd" />
+    <None Include="Class diagrams\Geocache.cd" />
+    <None Include="Class diagrams\Location.cd" />
+    <None Include="Class diagrams\Log.cd" />
+    <None Include="Class diagrams\User.cd" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

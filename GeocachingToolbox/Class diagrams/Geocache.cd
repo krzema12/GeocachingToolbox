@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" GroupingSetting="Access" MembersFormat="NameAndType">
+  <Class Name="GeocachingToolbox.Geocache">
+    <Position X="5" Y="0.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACEAAAggQAAAABgAgQAAAAAAAAAAUAAAAAAAAA=</HashCode>
+      <FileName>Geocache.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="GeocachingToolbox.GeocachingCom.GCGeocache">
+    <Position X="4.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACAAAAAAAAAAAAAAACAAAAAAAAAAAAA=</HashCode>
+      <FileName>GeocachingCom\GCGeocache.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GeocachingToolbox.Opencaching.OCGeocache">
+    <Position X="6.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Opencaching\OCGeocache.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="GeocachingToolbox.GeocacheSize">
+    <Position X="8" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAAAAQAAAAAQBgkAAAAAAAAAAAAAAAABA=</HashCode>
+      <FileName>GeocacheSize.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="GeocachingToolbox.GeocacheStatus">
+    <Position X="8" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACACAAAAIAAAAAAAAAAAAAAAAABA=</HashCode>
+      <FileName>GeocacheStatus.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="GeocachingToolbox.GeocacheType">
+    <Position X="9.75" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAECAAAAAIAAAAAAAAAAAAAAAAAAAAAAAQABAQAABA=</HashCode>
+      <FileName>GeocacheType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

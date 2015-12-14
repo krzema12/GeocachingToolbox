@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" GroupingSetting="Access" MembersFormat="NameAndType">
+  <Class Name="GeocachingToolbox.Client">
+    <Position X="3.25" Y="0.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAABAAQAAAACAAAAAIACAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Client.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GeocachingToolbox.GeocachingCom.GCClient">
+    <Position X="1" Y="3.25" Width="3.25" />
+    <Members>
+      <Field Name="_connector" Hidden="true" />
+      <Method Name="CheckIfPremium" Hidden="true" />
+      <Method Name="GeocacheLogTypeToNumber" Hidden="true" />
+      <Method Name="ParseCode" Hidden="true" />
+      <Method Name="ParseDescription" Hidden="true" />
+      <Method Name="ParseDifficulty" Hidden="true" />
+      <Method Name="ParseHiddenDate" Hidden="true" />
+      <Method Name="ParseHint" Hidden="true" />
+      <Method Name="ParseName" Hidden="true" />
+      <Method Name="ParseOwner" Hidden="true" />
+      <Method Name="ParseSize" Hidden="true" />
+      <Method Name="ParseStatus" Hidden="true" />
+      <Method Name="ParseTerrain" Hidden="true" />
+      <Method Name="ParseType" Hidden="true" />
+      <Method Name="ParseWaypoint" Hidden="true" />
+      <Method Name="RemoveBeginningOfAddress" Hidden="true" />
+      <Method Name="ToGeocacheSize" Hidden="true" />
+      <Method Name="ToGeocacheType" Hidden="true" />
+      <Method Name="TrackableLogTypeToNumber" Hidden="true" />
+    </Members>
+    <Compartments>
+      <Compartment Name="Private" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>ACAAAAwAEABCgABEAIACBAAAIEAAQAAAAgAQBDAERAA=</HashCode>
+      <FileName>GeocachingCom\GCClient.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GeocachingToolbox.Opencaching.OCClient">
+    <Position X="5" Y="3.25" Width="3.25" />
+    <Members>
+      <Field Name="_connector" Hidden="true" />
+      <Field Name="_requestTokens" Hidden="true" />
+      <Field Name="_tokenStore" Hidden="true" />
+      <Field Name="ConsumerKey" Hidden="true" />
+      <Field Name="ConsumerSecret" Hidden="true" />
+      <Method Name="GetUserInfo" Hidden="true" />
+      <Method Name="LogTypeToString" Hidden="true" />
+      <Method Name="StringToGeocacheSize" Hidden="true" />
+      <Method Name="StringToGeocacheStatus" Hidden="true" />
+      <Method Name="StringToGeocacheType" Hidden="true" />
+      <Method Name="StringToLogType" Hidden="true" />
+    </Members>
+    <Compartments>
+      <Compartment Name="Protected" Collapsed="true" />
+      <Compartment Name="Private" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAIAACQAAAACIAAEAYACAoAACAAAQBTAAQAAAAAQAIA=</HashCode>
+      <FileName>Opencaching\OCClient.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

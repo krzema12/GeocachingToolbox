@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" GroupingSetting="Access" MembersFormat="NameAndType">
+  <Class Name="GeocachingToolbox.Log">
+    <Position X="4" Y="0.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAEAAAAAAAEAAAAAACAAAAAAAABAAAAAAAAAAA=</HashCode>
+      <FileName>Log.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GeocachingToolbox.GeocachingCom.GCLog">
+    <Position X="3.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GeocachingCom\GCLog.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GeocachingToolbox.Opencaching.OCLog">
+    <Position X="5.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Opencaching\OCLog.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="GeocachingToolbox.GeocacheLogType">
+    <Position X="7.5" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAgAAIAIIQAAACAAAAAAAACABAAAAQAAAAAAACA=</HashCode>
+      <FileName>GeocacheLogType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

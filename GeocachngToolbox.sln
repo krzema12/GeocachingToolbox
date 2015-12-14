@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeocachingToolbox", "GeocachingToolbox\GeocachingToolbox.csproj", "{180C45B3-15D5-4154-AAA3-C96C666039A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeocachingToolbox.UnitTests", "GeocachingToolbox.UnitTests\GeocachingToolbox.UnitTests.csproj", "{F57B9E28-7BFA-47D9-A2A1-5C3E9B748709}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{180C45B3-15D5-4154-AAA3-C96C666039A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{180C45B3-15D5-4154-AAA3-C96C666039A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{180C45B3-15D5-4154-AAA3-C96C666039A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{180C45B3-15D5-4154-AAA3-C96C666039A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F57B9E28-7BFA-47D9-A2A1-5C3E9B748709}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F57B9E28-7BFA-47D9-A2A1-5C3E9B748709}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F57B9E28-7BFA-47D9-A2A1-5C3E9B748709}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F57B9E28-7BFA-47D9-A2A1-5C3E9B748709}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
