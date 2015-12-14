@@ -22,7 +22,7 @@ namespace GeocachingToolbox.UnitTests.Opencaching
 			_stubTokenStore.Stub(x => x.Token).Return("abc");
 			_stubTokenStore.Stub(x => x.TokenSecret).Return("def");
 
-			_ocClient = new OCClient("someInstallationUrl", _stubConnector, _stubTokenStore);
+			_ocClient = new OCClient("someInstallationUrl", _stubConnector, _stubTokenStore, new ApiAccessKeysForTests());
 			_ocClient.Connect();
 		};
 	}

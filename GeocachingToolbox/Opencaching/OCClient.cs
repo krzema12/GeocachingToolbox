@@ -17,9 +17,10 @@ namespace GeocachingToolbox.Opencaching
 
 		protected IAccessTokenStore _tokenStore;
 		protected IOCConnector _connector;
+		protected ApiAccessKeys _apiAccesKeys = new ApiAccessKeysImpl();
 		private Dictionary<string, string> _requestTokens;
 
-		public OCClient(string installationUrl, IOCConnector connector = null, IAccessTokenStore tokenStore = null)
+		public OCClient(string installationUrl, IOCConnector connector = null, IAccessTokenStore tokenStore = null, ApiAccessKeys apiAccessKeys = null)
 		{
 			if (connector == null)
 			{
@@ -32,7 +33,12 @@ namespace GeocachingToolbox.Opencaching
 				_tokenStore = tokenStore;
 			}
 
-			_connector.SetConsumerKeyAndSecret(ApiAccessKeys.ConsumerKey, ApiAccessKeys.ConsumerSecret);
+			if (apiAccessKeys != null)
+			{
+				_apiAccesKeys = apiAccessKeys;
+			}
+
+			_connector.SetConsumerKeyAndSecret(_apiAccesKeys.ConsumerKey, _apiAccesKeys.ConsumerSecret);
 			
 			if (_tokenStore.Populated)
 			{
@@ -55,7 +61,7 @@ namespace GeocachingToolbox.Opencaching
 			authorizeArgs.Add("oauth_token", _requestTokens["oauth_token"]);
 			var authorizeUrl = _connector.GetURL("services/oauth/authorize", authorizeArgs);
 
-			_connector.SetConsumerKeyAndSecret(ApiAccessKeys.ConsumerKey, ApiAccessKeys.ConsumerSecret);
+			_connector.SetConsumerKeyAndSecret(_apiAccesKeys.ConsumerKey, _apiAccesKeys.ConsumerSecret);
 
 			return authorizeUrl;
 		}

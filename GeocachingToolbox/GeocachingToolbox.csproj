@@ -67,6 +67,7 @@
     <Compile Include="Location.cs" />
     <Compile Include="Opencaching\AccessTokenStore.cs" />
     <Compile Include="Opencaching\ApiAccessKeys.cs" />
+    <Compile Include="Opencaching\ApiAccessKeysImpl.cs" />
     <Compile Include="Opencaching\IAccessTokenStore.cs" />
     <Compile Include="Opencaching\OAuthBase.cs" />
     <Compile Include="Opencaching\IOCConnector.cs" />

@@ -57,6 +57,7 @@
     <Compile Include="GeocachingCom\GettingDetailsOfPremiumCacheByCode.cs" />
     <Compile Include="GeocachingCom\GettingDetailsOfCacheByCode.cs" />
     <Compile Include="GeocachingCom\GettingLogsTests.cs" />
+    <Compile Include="Opencaching\ApiAccessKeysForTests.cs" />
     <Compile Include="TextComparisonToolsTests.cs" />
     <EmbeddedResource Include="Opencaching\JsonResponses\GeocacheDetails.json" />
     <Compile Include="GeocachingCom\GettingNearestGeocachesFromGivenPlace.cs" />
