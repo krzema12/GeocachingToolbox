@@ -3,17 +3,9 @@
 # GeocachingToolbox
 A .NET library for interfacing geocaching services.
 
-## Feature coverage
+## Project status
 
-Feature                             | Geocaching.com                                              | Opencaching
-------------------------------------|-------------------------------------------------------------|------------
-Downloading found geocaches         | Yes                                                         | Yes
-Posting logs to geocaches           | Yes                                                         | Yes
-Retrieving details about geocaches  | Partial (no logs and photos)                                | Partial (no logs and photos)
-Logging trackable items             | Yes                                                         | No<sup>1</sup>
-Retrieving details about trackables | No                                                          | No<sup>1</sup>
-Watching geocaches                  | No                                                          | No
+The project is in a big technical debt - it's essentially a proof of concept with only simple features implemented, cutting some corners here and there. Before it's ready for a normal develompent (adding new features), some additional redesigning and refactoring must be done. It's covered in these issues: https://github.com/krzema12/GeocachingToolbox/labels/refactoring
 
-<sup>1</sup>Refers to Geokrety.
-
-*TODO: This list should be complemented.*
+## Interesting stuff
+- [Feature coverage](https://github.com/krzema12/GeocachingToolbox/wiki/Feature-coverage)
