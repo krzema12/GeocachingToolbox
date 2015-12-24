@@ -10,8 +10,9 @@ namespace Examples
 	{
 		static void Main(string[] args)
 		{
-			var geocachingComExamples = new GeocachingComExamples();
-			geocachingComExamples.Run();
+			var examples = new GeocachingComExamples();
+			//var examples = new OpencachingExamples();
+			examples.Run();
 		}
 	}
 }
