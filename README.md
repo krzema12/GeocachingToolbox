@@ -5,7 +5,8 @@ A .NET library for interfacing geocaching services.
 
 ## Project status
 
-The project is in a big technical debt - it's essentially a proof of concept with only simple features implemented, cutting some corners here and there. Before it's ready for a normal develompent (adding new features), some additional redesigning and refactoring must be done. It's covered in these issues: https://github.com/krzema12/GeocachingToolbox/labels/refactoring
+The project is in a big technical debt - it's essentially a proof of concept with only simple features implemented, cutting some corners here and there. Before it's ready for a normal develompent (adding new features), some additional redesigning and refactoring must be done (see [Redesigning and refactoring](https://github.com/krzema12/GeocachingToolbox/wiki/Redesigning-and-refactoring)). It's covered in these issues: https://github.com/krzema12/GeocachingToolbox/labels/refactoring
 
 ## Interesting stuff
+- [Home wiki page - about the project](https://github.com/krzema12/GeocachingToolbox/wiki)
 - [Feature coverage](https://github.com/krzema12/GeocachingToolbox/wiki/Feature-coverage)
