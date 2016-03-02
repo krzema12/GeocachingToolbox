@@ -1,47 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using PCLStorage;
 
 namespace GeocachingToolbox.Opencaching
 {
-	public class AccessTokenStore : IAccessTokenStore
-	{
-		public bool Populated { get; set; }
-		public string Token { get; set; }
-		public string TokenSecret { get; set; }
-		private string TokensFilePath;
+    public class AccessTokenStore : IAccessTokenStore
+    {
+        public bool Populated { get; set; }
+        public string Token { get; set; }
+        public string TokenSecret { get; set; }
+        private readonly IFile TokensFile;
 
-		public AccessTokenStore()
-		{
-			TokensFilePath = Path.Combine(Path.Combine(Environment.GetFolderPath(
-				Environment.SpecialFolder.ApplicationData),
-				"Geocaching Toolbox"),
-				"Tokens.txt");
+        public AccessTokenStore()
+        {
+            IFolder rootFolder = FileSystem.Current.LocalStorage;
 
-			if (File.Exists(TokensFilePath))
-			{
-				var lines = File.ReadAllLines(TokensFilePath);
-				Token = lines[0];
-				TokenSecret = lines[1];
-				Populated = true;
-			}
-			else
-			{
-				Populated = false;
-			}
-		}
+            IFolder geoCachingToolboxFolder =
+                rootFolder.CreateFolderAsync("Geocaching Toolbox", CreationCollisionOption.OpenIfExists).Result;
+            TokensFile = geoCachingToolboxFolder.CreateFileAsync("Tokens.txt", CreationCollisionOption.OpenIfExists).Result;
 
-		public void SetValues(string token, string tokenSecret)
-		{
-			Token = token;
-			TokenSecret = tokenSecret;
+            string read = TokensFile.ReadAllTextAsync().Result;
+            if (!string.IsNullOrWhiteSpace(read))
+            {
+                var split = read.Split(':');
+                if (split != null && split.Length == 2)
+                {
+                    Token = split[0];
+                    TokenSecret = split[1];
+                    Populated = true;
+                }
+            }
+        }
 
-			var dirToBeCreated = Path.GetDirectoryName(TokensFilePath);
-			Directory.CreateDirectory(dirToBeCreated);
-			File.WriteAllLines(TokensFilePath, new string[] { Token, TokenSecret });
-			Populated = true;
-		}
-	}
+        public void SetValues(string token, string tokenSecret)
+        {
+            Token = token;
+            TokenSecret = tokenSecret;
+            TokensFile.WriteAllTextAsync($"{Token}:{TokenSecret}").Wait();
+            Populated = true;
+        }
+    }
 }
