@@ -66,7 +66,7 @@ namespace GeocachingToolbox.GeocachingCom
 
             var parser = new HtmlParser();
             var document = parser.Parse(html);
-            var rows = document.QuerySelectorAll("div[id=ctl00_divContentMain] table tr");
+            var rows = document.QuerySelectorAll("div[id=divContentMain] table tr");
             foreach (var row in rows)
             {
                 var element = row.QuerySelector("td:nth-child(4) a:nth-child(2)");

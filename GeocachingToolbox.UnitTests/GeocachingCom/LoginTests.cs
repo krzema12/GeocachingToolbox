@@ -33,9 +33,9 @@ namespace GeocachingToolbox.UnitTests.GeocachingCom
 		It should_call_connectors_Login_method = () =>
 			_stubConnector.VerifyAllExpectations();
         It should_assign_user_name_to_appropriate_field = () =>
-            _gcClient.User.Name.ShouldEqual("Krzema");
+            _gcClient.User.Name.ShouldEqual("Cyborg93");
         It should_assign_number_of_found_geocaches_to_appropriate_field = () =>
-			_gcClient.User.FoundGeocachesCount.ShouldEqual(153);
+			_gcClient.User.FoundGeocachesCount.ShouldEqual(4);
 	}
 
 	[Subject("Logging in to Geocaching.com")]
