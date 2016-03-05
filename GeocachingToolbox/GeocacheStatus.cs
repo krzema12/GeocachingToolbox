@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace GeocachingToolbox
 {
-	public enum GeocacheStatus
-	{
-		Unknown,
-		Published,
-		Disabled,
-		Archived
-	}
+    public enum GeocacheStatus
+    {
+        Unknown,
+        Published,
+        Disabled,
+        Archived
+    }
 }

@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace GeocachingToolbox.Opencaching
 {
-	public class OCLog : Log
-	{
-		public string Uuid { get; set; }
-	}
+    public class OCLog : Log
+    {
+        public string Uuid { get; set; }
+    }
 }

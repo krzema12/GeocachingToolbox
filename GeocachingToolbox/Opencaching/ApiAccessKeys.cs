@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace GeocachingToolbox.Opencaching
 {
-	public interface ApiAccessKeys
-	{
-		string ConsumerKey { get; }
-		string ConsumerSecret { get; }
-	}
+    public interface ApiAccessKeys
+    {
+        string ConsumerKey { get; }
+        string ConsumerSecret { get; }
+    }
 }

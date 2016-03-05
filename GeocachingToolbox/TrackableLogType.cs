@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace GeocachingToolbox
 {
-	public enum TrackableLogType
-	{
-		Undefined,
-		Grab,
-		Discovered,
-		WriteNote
-	}
+    public enum TrackableLogType
+    {
+        Undefined,
+        Grab,
+        Discovered,
+        WriteNote
+    }
 }

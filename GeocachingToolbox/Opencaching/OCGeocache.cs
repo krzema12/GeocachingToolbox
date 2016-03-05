@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GeocachingToolbox.Opencaching
 {
-	public class OCGeocache : Geocache
-	{
-	}
+    public class OCGeocache : Geocache
+    {
+    }
 }

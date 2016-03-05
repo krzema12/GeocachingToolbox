@@ -7,19 +7,19 @@ using System.Threading.Tasks;
 
 namespace GeocachingToolbox
 {
-	public enum GeocacheLogType
-	{
-		Undefined,
-		Found,
-		DidNotFind,
-		WriteNote,
-		DisableListing,
-		EnableListing,
-		PublishListing,
-		NeedsMaintenance,
-		OwnerMaintenance,
-		UpdateCoordinates,
-		ReviewerNote,
-		Attended
-	}
+    public enum GeocacheLogType
+    {
+        Undefined,
+        Found,
+        DidNotFind,
+        WriteNote,
+        DisableListing,
+        EnableListing,
+        PublishListing,
+        NeedsMaintenance,
+        OwnerMaintenance,
+        UpdateCoordinates,
+        ReviewerNote,
+        Attended
+    }
 }

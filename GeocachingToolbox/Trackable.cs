@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace GeocachingToolbox
 {
-	public abstract class Trackable : ILoggable
-	{
-		public string TrackingCode { get; set; }
-	}
+    public abstract class Trackable : ILoggable
+    {
+        public string TrackingCode { get; set; }
+    }
 }

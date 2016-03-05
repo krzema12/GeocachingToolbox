@@ -13,9 +13,9 @@ namespace GeocachingToolbox
         public ILoggable Thing { get; set; }
         public GeocacheLogType LogType { get; set; }
 
-		public override string ToString()
-		{
-			return "Log from " + Date.ToString() + ": " + Comment;
-		}
+        public override string ToString()
+        {
+            return "Log from " + Date.ToString() + ": " + Comment;
+        }
     }
 }

@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace GeocachingToolbox
 {
-	public enum GeocacheType
-	{
-		Unknown,
-		Traditional,
-		Mystery,
-		Multicache,
-		Whereigo,
-		LetterboxHybrid,
-		Earthcache
-	}
+    public enum GeocacheType
+    {
+        Unknown,
+        Traditional,
+        Mystery,
+        Multicache,
+        Whereigo,
+        LetterboxHybrid,
+        Earthcache
+    }
 }

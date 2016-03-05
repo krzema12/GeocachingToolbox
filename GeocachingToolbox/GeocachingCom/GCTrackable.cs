@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GeocachingToolbox.GeocachingCom
 {
-	public class GCTrackable : Trackable
-	{
-	}
+    public class GCTrackable : Trackable
+    {
+    }
 }

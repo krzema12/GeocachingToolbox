@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace GeocachingToolbox.GeocachingCom
 {
-	public class GCUser : User
-	{
-		public GCUser(string nick, int foundCount)
-		{
-			Name = nick;
-			FoundGeocachesCount = foundCount;
-		}
-	}
+    public class GCUser : User
+    {
+        public GCUser(string nick, int foundCount)
+        {
+            Name = nick;
+            FoundGeocachesCount = foundCount;
+        }
+    }
 }
