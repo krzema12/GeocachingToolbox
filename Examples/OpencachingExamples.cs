@@ -4,73 +4,79 @@ using System.Linq;
 
 namespace Examples
 {
-	class OpencachingExamples
-	{
-		private OCClient client;
+    class OpencachingExamples
+    {
+        private OCClient client;
+        private ApiAccessKeys m_ApiKeys;
 
-		public void Run()
-		{
-			Authenticate();
-			DisplayUserInfo();
-			ListNewestFoundGeocaches();
-			GetDetailsForNewestFoundGeocache();
+        public OpencachingExamples(ApiAccessKeys apiKeys)
+        {
+            m_ApiKeys = apiKeys;
+        }
 
-			Console.Write("\n\n");
-			Console.WriteLine("Press enter to close this window...");
-			Console.Read();
-		}
+        public void Run()
+        {
+            Authenticate();
+            DisplayUserInfo();
+            ListNewestFoundGeocaches();
+            GetDetailsForNewestFoundGeocache();
 
-		private void Authenticate()
-		{
-			client = new OCClient("http://opencaching.pl/okapi/");
+            Console.Write("\n\n");
+            Console.WriteLine("Press enter to close this window...");
+            Console.Read();
+        }
 
-			if (client.NeedsAuthorization)
-			{
-				Console.Write("Please open this link in your browser: " + client.GetAuthorizationUrl () + " and enter pin here:");
-				string pin = Console.ReadLine();
-				client.EnterAuthorizationPin(pin);
-			}
+        private void Authenticate()
+        {
+            client = new OCClient("http://opencaching.pl/okapi/", apiAccessKeys: m_ApiKeys);
 
-			client.Connect();
-		}
+            if (client.NeedsAuthorization)
+            {
+                Console.Write("Please open this link in your browser: " + client.GetAuthorizationUrl() + " and enter pin here:");
+                string pin = Console.ReadLine();
+                client.EnterAuthorizationPin(pin);
+            }
 
-		private void DisplayUserInfo()
-		{
-			Console.WriteLine("Hello {0}! So far you've found {1} geocaches.", client.User.Name, client.User.FoundGeocachesCount);
-		}
+            client.Connect();
+        }
 
-		private void ListNewestFoundGeocaches()
-		{
-			Console.WriteLine("Here are some geocaches you've recently found:");
+        private void DisplayUserInfo()
+        {
+            Console.WriteLine("Hello {0}! So far you've found {1} geocaches.", client.User.Name, client.User.FoundGeocachesCount);
+        }
 
-			var foundLogsNewestTen = client.GetFoundGeocaches<OCLog>().Take(10);
+        private void ListNewestFoundGeocaches()
+        {
+            Console.WriteLine("Here are some geocaches you've recently found:");
 
-			foreach (var log in foundLogsNewestTen)
-			{
-				var cache = log.Thing as OCGeocache;
-				Console.WriteLine("{0}", cache.Code);
-			}
-		}
+            var foundLogsNewestTen = client.GetFoundGeocaches<OCLog>().Take(10);
 
-		private void GetDetailsForNewestFoundGeocache()
-		{
-			var newestFoundLog = client.GetFoundGeocaches<OCLog>().FirstOrDefault();
+            foreach (var log in foundLogsNewestTen)
+            {
+                var cache = log.Thing as OCGeocache;
+                Console.WriteLine("{0}", cache.Code);
+            }
+        }
 
-			if (newestFoundLog == null)
-			{
-				return;
-			}
+        private void GetDetailsForNewestFoundGeocache()
+        {
+            var newestFoundLog = client.GetFoundGeocaches<OCLog>().FirstOrDefault();
 
-			var newestFoundCache = newestFoundLog.Thing as OCGeocache;
-			client.GetGeocacheDetails<OCGeocache>(newestFoundCache);
+            if (newestFoundLog == null)
+            {
+                return;
+            }
 
-			Console.WriteLine("Name:               {0}", newestFoundCache.Name);
-			Console.WriteLine("Type:               {0}", newestFoundCache.Type);
-			Console.WriteLine("Difficulty/Terrain: {0}/{1}", newestFoundCache.Difficulty, newestFoundCache.Terrain);
-			Console.WriteLine("Status:             {0}", newestFoundCache.Status);
-			Console.WriteLine("Owner:              {0}", newestFoundCache.Owner.Name);
-			Console.WriteLine("Hint:               {0}", newestFoundCache.Hint);
-			Console.WriteLine("Description (beginning):\n{0}", newestFoundCache.Description.Substring(0, 500));
-		}
-	}
+            var newestFoundCache = newestFoundLog.Thing as OCGeocache;
+            client.GetGeocacheDetails<OCGeocache>(newestFoundCache);
+
+            Console.WriteLine("Name:               {0}", newestFoundCache.Name);
+            Console.WriteLine("Type:               {0}", newestFoundCache.Type);
+            Console.WriteLine("Difficulty/Terrain: {0}/{1}", newestFoundCache.Difficulty, newestFoundCache.Terrain);
+            Console.WriteLine("Status:             {0}", newestFoundCache.Status);
+            Console.WriteLine("Owner:              {0}", newestFoundCache.Owner.Name);
+            Console.WriteLine("Hint:               {0}", newestFoundCache.Hint);
+            Console.WriteLine("Description (beginning):\n{0}", newestFoundCache.Description.Substring(0, 500));
+        }
+    }
 }
