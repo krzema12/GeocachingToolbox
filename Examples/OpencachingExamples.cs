@@ -7,7 +7,12 @@ namespace Examples
     class OpencachingExamples
     {
         private OCClient client;
+        ApiAccessKeys m_ApiKeys;
 
+        public OpencachingExamples(ApiAccessKeys apiKeys)
+        {
+            m_ApiKeys = apiKeys;
+        }
         public void Run()
         {
             Authenticate();
@@ -22,7 +27,7 @@ namespace Examples
 
         private void Authenticate()
         {
-            client = new OCClient("http://opencaching.pl/okapi/");
+            client = new OCClient("http://opencaching.pl/okapi/", apiAccessKeys: m_ApiKeys);
 
             if (client.NeedsAuthorization)
             {

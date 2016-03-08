@@ -11,8 +11,14 @@ namespace Examples
     class GeocachingComExamples
     {
         private GCClient client;
-        private const string Login = "YourLoginHere";
-        private const string Password = "YourPasswordHere";
+        private readonly string Login;
+        private readonly string Password;
+
+        public GeocachingComExamples(string login, string password)
+        {
+            Login = login;
+            Password = password;
+        }
 
         public void Run()
         {
