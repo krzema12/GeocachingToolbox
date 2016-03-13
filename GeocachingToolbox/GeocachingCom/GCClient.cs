@@ -1,19 +1,17 @@
-﻿using HtmlAgilityPack;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using AngleSharp.Dom.Html;
+using AngleSharp.Parser.Html;
 
 namespace GeocachingToolbox.GeocachingCom
 {
     public class GCClient : Client
     {
-        private IGCConnector _connector;
+        private readonly IGCConnector _connector;
 
         public GCClient(IGCConnector connector = null)
         {
@@ -63,43 +61,41 @@ namespace GeocachingToolbox.GeocachingCom
             var html = _connector.GetPage("my/logs.aspx?s=1&lt=2");
             var found = new List<GCLog>();
 
-            var doc = new HtmlDocument();
-            doc.LoadHtml(html);
-
-            var foundCachesRows = doc.DocumentNode.SelectNodes("//div[@id=\"ctl00_divContentMain\"]/table/tbody/tr");
+            var parser = new HtmlParser();
+            var document = parser.Parse(html);
+            // below div name is wrong (ctl00_divContentMain => should be replaced by divContentMain)
+            var foundCachesRows = document.QuerySelectorAll("div[id=ctl00_divContentMain] table tr");
 
             foreach (var row in foundCachesRows)
             {
-                var nameCell = row.SelectSingleNode("td[4]");
-                HtmlNode nameNode = nameCell.SelectSingleNode("span") ?? nameCell;
-                nameNode = nameNode.SelectSingleNode("a[2]");
+                var element = row.QuerySelector("td:nth-child(4) a:nth-child(2)");
+                var name = WebUtility.HtmlDecode(element.TextContent);
 
                 var status = GeocacheStatus.Published;
-                var statusSpan = nameNode.SelectSingleNode("span");
-
-                if (statusSpan != null)
+                element = row.QuerySelector("td:nth-child(4) span[class*=Strike]");
+                if (!string.IsNullOrWhiteSpace(element?.ClassName))
                 {
-                    if (statusSpan.Attributes["class"].Value == "Strike")
-                    {
+                    if (element.ClassName == "Strike")
                         status = GeocacheStatus.Disabled;
-                    }
-                    else if (statusSpan.Attributes["class"].Value == "Strike OldWarning")
-                    {
+                    if (element.ClassName == "Strike OldWarning")
                         status = GeocacheStatus.Archived;
-                    }
-
-                    nameNode = nameNode.SelectSingleNode("span");
                 }
 
-                var name = WebUtility.HtmlDecode(nameNode.InnerText);
-                var detailsUrl = RemoveBeginningOfAddress(nameCell.SelectSingleNode(".//a").Attributes["href"].Value);
-                var type = ToGeocacheType(nameCell.SelectSingleNode(".//img").Attributes["title"].Value);
+                element = row.QuerySelector("td:nth-child(4) a:first-of-type");
+                var detailsUrl = RemoveBeginningOfAddress(element.GetAttribute("href"));
 
-                var isFavoriteNode = row.SelectSingleNode("td[2]/img");
-                bool isFavorite = isFavoriteNode != null && isFavoriteNode.Attributes["title"].Value == "You have favorited this cache";
+                element = row.QuerySelector("td:nth-child(4) img:first-of-type");
+                var type = ToGeocacheType(element.GetAttribute("title"));
 
-                var dateText = row.SelectSingleNode("td[3]").InnerText.Trim();
-                var date = DateTime.ParseExact(dateText, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                bool isFavorite = false;
+                element = row.QuerySelector("td:nth-child(2) img");
+                if (element != null)
+                {
+                    isFavorite = element.GetAttribute("title") == "You have favorited this cache";
+                }
+
+                element = row.QuerySelector("td:nth-child(3)");
+                var date = DateTime.ParseExact(element.TextContent.Trim(), "dd/MM/yyyy", CultureInfo.CurrentCulture);
 
                 var geocache = new GCGeocache
                 {
@@ -130,40 +126,42 @@ namespace GeocachingToolbox.GeocachingCom
                 location.Longitude.ToString(CultureInfo.InvariantCulture));
             var html = _connector.GetPage(url);
 
-            var doc = new HtmlDocument();
-            doc.LoadHtml(html);
+            var parser = new HtmlParser();
+
+            var doc = parser.Parse(html);
 
             var nearest = new List<GCGeocache>();
 
-            var nearestCachesRows = doc.DocumentNode.SelectNodes("//div[@id=\"ctl00_ContentBody_ResultsPanel\"]/table[@class=\"SearchResultsTable Table\"]/tr[position()>1]");
+            var nearestCachesRows = doc.QuerySelectorAll("div[id=ctl00_ContentBody_ResultsPanel] table[class=\"SearchResultsTable Table\"] tr:not(:first-child)");
 
             foreach (var row in nearestCachesRows)
             {
-                var nameAuthorCodeCell = row.SelectSingleNode("td[6]");
-                var name = WebUtility.HtmlDecode(nameAuthorCodeCell.SelectSingleNode("a/span").InnerText);
+                var nameAuthorCodeCell = row.QuerySelector("td:nth-child(6)");
+                var name = WebUtility.HtmlDecode(nameAuthorCodeCell.QuerySelector("a span").TextContent);
 
-                var authorAndCode = WebUtility.HtmlDecode(nameAuthorCodeCell.SelectSingleNode("span").InnerText.Trim());
+                var authorAndCode = WebUtility.HtmlDecode(nameAuthorCodeCell.QuerySelector("span[class=small]").TextContent.Trim());
                 var authorAndCodeRegex = new Regex("by (.*)\\s+\\|\\s+([0-9A-Z]+)\\s+\\|\\s+.*");
                 var authorAndCodeMatch = authorAndCodeRegex.Match(authorAndCode);
                 var author = authorAndCodeMatch.Groups[1].Value.Trim();
                 var code = authorAndCodeMatch.Groups[2].Value.Trim();
 
-                var typeText = row.SelectSingleNode("td[5]/a/img").Attributes["title"].Value;
+                var typeText = row.QuerySelector("td:nth-child(5) a img").Attributes["title"].Value;
                 var type = ToGeocacheType(typeText);
 
-                var diffTerrainSizeNode = row.SelectSingleNode("td[8]");
-                var diffTerrain = diffTerrainSizeNode.SelectSingleNode("span").InnerText.Split('/');
+                var diffTerrainSizeNode = row.QuerySelector("td:nth-child(8)");
+                var diffTerrain = diffTerrainSizeNode.QuerySelector("span").TextContent.Split('/');
                 var diff = float.Parse(diffTerrain[0], CultureInfo.InvariantCulture);
                 var terrain = float.Parse(diffTerrain[1], CultureInfo.InvariantCulture);
-                var sizeRawString = diffTerrainSizeNode.SelectSingleNode("img").Attributes["title"].Value;
+                var sizeRawString = diffTerrainSizeNode.QuerySelector("img").Attributes["title"].Value;
                 var sizeRegex = new Regex("Size: (.*)");
                 var sizeMatch = sizeRegex.Match(sizeRawString);
                 var size = ToGeocacheSize(sizeMatch.Groups[1].Value.ToLower());
 
-                var isPremium = row.SelectSingleNode("td[7]/img[@title=\"Premium Member Only Cache\"]") != null;
+                var isPremium = row.QuerySelector("td:nth-child(7) img[title=\"Premium Member Only Cache\"]") != null;
 
-                var dateText = row.SelectSingleNode("td[9]/span").InnerText;
+                var dateText = row.QuerySelector("td:nth-child(9) span").TextContent;
                 var date = DateTime.ParseExact(dateText, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
 
                 var geocache = new GCGeocache
                 {
@@ -192,8 +190,8 @@ namespace GeocachingToolbox.GeocachingCom
                 var address = "seek/log.aspx?wp=" + geocache.Code;
                 var html = _connector.GetPage(address);
 
-                var doc = new HtmlDocument();
-                doc.LoadHtml(html);
+                var parser = new HtmlParser();
+                var doc = parser.Parse(html);
 
                 IDictionary<string, string> parameters = new Dictionary<string, string>
                 {
@@ -204,7 +202,7 @@ namespace GeocachingToolbox.GeocachingCom
                     { "ctl00$ContentBody$uxVistOtherListingGC", "" },
                 };
 
-                var hiddenFormFields = doc.DocumentNode.SelectNodes("//input[@type=\"hidden\"]");
+                var hiddenFormFields = doc.QuerySelectorAll("input[type=hidden]");
 
                 foreach (var field in hiddenFormFields)
                 {
@@ -224,20 +222,19 @@ namespace GeocachingToolbox.GeocachingCom
             if (string.IsNullOrEmpty(trackable.TrackingCode) == false)
             {
                 var detailsPageHtml = _connector.GetPage("track/details.aspx?tracker=" + trackable.TrackingCode);
-                var detailsPageDoc = new HtmlDocument();
-                detailsPageDoc.LoadHtml(detailsPageHtml);
+                var parser = new HtmlParser();
+                var detailsPageDoc = parser.Parse(detailsPageHtml);
 
-                if (detailsPageDoc.GetElementbyId("ctl00_ContentBody_ErrorMessage") != null)
+                if (detailsPageDoc.GetElementById("ctl00_ContentBody_ErrorMessage") != null)
                 {
                     throw new TrackableNotFoundException("Trackable with the code " + trackable.TrackingCode + " does not exist in the system!");
                 }
 
-                var logPageAddress = detailsPageDoc.GetElementbyId("ctl00_ContentBody_LogLink").Attributes["href"].Value;
+                var logPageAddress = detailsPageDoc.GetElementById("ctl00_ContentBody_LogLink").Attributes["href"].Value;
                 logPageAddress = "track/" + WebUtility.HtmlDecode(RemoveBeginningOfAddress(logPageAddress));
 
                 var loggingPageHtml = _connector.GetPage(logPageAddress);
-                var loggingPageDoc = new HtmlDocument();
-                loggingPageDoc.LoadHtml(loggingPageHtml);
+                var loggingPageDoc = parser.Parse(loggingPageHtml);
 
                 IDictionary<string, string> parameters = new Dictionary<string, string>
                 {
@@ -249,7 +246,7 @@ namespace GeocachingToolbox.GeocachingCom
                     { "ctl00$ContentBody$uxVistOtherTrackableTB", "" }
                 };
 
-                var hiddenFormFields = loggingPageDoc.DocumentNode.SelectNodes("//input[@type=\"hidden\"]");
+                var hiddenFormFields = loggingPageDoc.QuerySelectorAll("input[type=hidden]");
 
                 foreach (var field in hiddenFormFields)
                 {
@@ -325,8 +322,8 @@ namespace GeocachingToolbox.GeocachingCom
                 throw new Exception("No way to identify the cache!");
             }
 
-            var doc = new HtmlDocument();
-            doc.LoadHtml(html);
+            var parser = new HtmlParser();
+            var doc = parser.Parse(html);
 
             CheckIfPremium(gcGeocache, doc);
 
@@ -353,8 +350,8 @@ namespace GeocachingToolbox.GeocachingCom
             if (string.IsNullOrEmpty(trackable.TrackingCode) == false)
             {
                 var detailsPageHtml = _connector.GetPage("track/details.aspx?tracker=" + trackable.TrackingCode);
-                var detailsPageDoc = new HtmlDocument();
-                detailsPageDoc.LoadHtml(detailsPageHtml);
+                var parser = new HtmlParser();
+                parser.Parse(detailsPageHtml);
             }
         }
 
@@ -363,40 +360,38 @@ namespace GeocachingToolbox.GeocachingCom
             return address.Replace("http://www.geocaching.com/", "");
         }
 
-        private void CheckIfPremium(GCGeocache gcGeocache, HtmlDocument doc)
+        private void CheckIfPremium(GCGeocache gcGeocache, IHtmlDocument doc)
         {
-            gcGeocache.IsPremium = doc.GetElementbyId("ctl00_ContentBody_basicMemberMsg") != null;
+            gcGeocache.IsPremium = doc.GetElementById("ctl00_ContentBody_basicMemberMsg") != null;
         }
 
-        private void ParseCode(GCGeocache gcGeocache, HtmlDocument doc)
+        private void ParseCode(GCGeocache gcGeocache, IHtmlDocument doc)
         {
             if (gcGeocache.IsPremium)
             {
-                var code = doc.DocumentNode.SelectSingleNode("//div[@id=\"ctl00_divContentMain\"]/h2")
-                    .InnerText;
+                var code = doc.QuerySelector("div[id=ctl00_divContentMain] h2").TextContent;
                 code = code.Substring(code.LastIndexOf('(') + 1).Trim();
                 code = code.Substring(0, code.Length - 1);
                 gcGeocache.Code = code;
             }
             else
             {
-                gcGeocache.Code = doc.GetElementbyId("ctl00_ContentBody_CoordInfoLinkControl1_uxCoordInfoCode")
-                    .InnerText.Trim();
+                gcGeocache.Code = doc.GetElementById("ctl00_ContentBody_CoordInfoLinkControl1_uxCoordInfoCode").TextContent.Trim();
             }
         }
 
-        private void ParseOwner(GCGeocache gcGeocache, HtmlDocument doc)
+        private void ParseOwner(GCGeocache gcGeocache, IHtmlDocument doc)
         {
             string ownerName;
             if (gcGeocache.IsPremium)
             {
-                ownerName = doc.GetElementbyId("ctl00_ContentBody_uxCacheType").InnerText.Trim();
+                ownerName = doc.GetElementById("ctl00_ContentBody_uxCacheType").TextContent.Trim();
                 ownerName = ownerName.Replace("A cache by ", "");
             }
             else
             {
-                var ownerNode = doc.DocumentNode.SelectSingleNode("//div[@id=\"ctl00_ContentBody_mcd1\"]/a");
-                ownerName = ownerNode.InnerText.Trim();
+                var ownerNode = doc.QuerySelector("div[id=ctl00_ContentBody_mcd1] a");
+                ownerName = ownerNode.TextContent.Trim();
             }
 
             ownerName = WebUtility.HtmlDecode(ownerName);
@@ -404,9 +399,9 @@ namespace GeocachingToolbox.GeocachingCom
             gcGeocache.Owner = owner;
         }
 
-        private void ParseWaypoint(GCGeocache gcGeocache, HtmlDocument doc)
+        private void ParseWaypoint(GCGeocache gcGeocache, IHtmlDocument doc)
         {
-            var coordsString = doc.GetElementbyId("uxLatLon").InnerText.Trim();
+            var coordsString = doc.GetElementById("uxLatLon").TextContent.Trim();
             var coordsRegex = new Regex("(?<latDir>[NS]) (?<latDeg>\\d+)° (?<latMin>\\d+\\.\\d+) "
                 + "(?<longDir>[WE]) (?<longDeg>\\d+)° (?<longMin>\\d+\\.\\d+)");
             var coords = coordsRegex.Match(coordsString);
@@ -420,25 +415,25 @@ namespace GeocachingToolbox.GeocachingCom
             gcGeocache.Waypoint = location;
         }
 
-        private void ParseHiddenDate(GCGeocache gcGeocache, HtmlDocument doc)
+        private void ParseHiddenDate(GCGeocache gcGeocache, IHtmlDocument doc)
         {
-            var date = doc.GetElementbyId("ctl00_ContentBody_mcd2").InnerText;
+            var date = doc.GetElementById("ctl00_ContentBody_mcd2").TextContent;
             date = date.Substring(date.IndexOf(':') + 1).Trim();
             gcGeocache.DateHidden = DateTime.ParseExact(date, "dd/MM/yyyy", CultureInfo.InvariantCulture);
         }
 
-        private void ParseTerrain(GCGeocache gcGeocache, HtmlDocument doc)
+        private void ParseTerrain(GCGeocache gcGeocache, IHtmlDocument doc)
         {
             string terrain;
 
             if (gcGeocache.IsPremium)
             {
-                terrain = doc.DocumentNode.SelectSingleNode("//div[@id=\"ctl00_divContentMain\"]/p/img[3]")
-                    .Attributes["alt"].Value;
+                terrain = doc.QuerySelector("div[id=ctl00_divContentMain] p img:nth-of-type(3)")
+                   .Attributes["alt"].Value;
             }
             else
             {
-                terrain = doc.DocumentNode.SelectSingleNode("//span[@id=\"ctl00_ContentBody_Localize12\"]/img")
+                terrain = doc.QuerySelector("span[id=ctl00_ContentBody_Localize12] img")
                 .Attributes["alt"].Value;
             }
 
@@ -446,18 +441,18 @@ namespace GeocachingToolbox.GeocachingCom
             gcGeocache.Terrain = float.Parse(terrain, CultureInfo.InvariantCulture);
         }
 
-        private void ParseDifficulty(GCGeocache gcGeocache, HtmlDocument doc)
+        private void ParseDifficulty(GCGeocache gcGeocache, IHtmlDocument doc)
         {
             string difficulty;
 
             if (gcGeocache.IsPremium)
             {
-                difficulty = doc.DocumentNode.SelectSingleNode("//div[@id=\"ctl00_divContentMain\"]/p/img[2]")
+                difficulty = doc.QuerySelector("div[id=ctl00_divContentMain] p img:nth-of-type(2)")
                     .Attributes["alt"].Value;
             }
             else
             {
-                difficulty = doc.DocumentNode.SelectSingleNode("//span[@id=\"ctl00_ContentBody_uxLegendScale\"]/img")
+                difficulty = doc.QuerySelector("span[id=ctl00_ContentBody_uxLegendScale] img")
                     .Attributes["alt"].Value;
             }
 
@@ -465,63 +460,59 @@ namespace GeocachingToolbox.GeocachingCom
             gcGeocache.Difficulty = float.Parse(difficulty, CultureInfo.InvariantCulture);
         }
 
-        private static void ParseName(GCGeocache gcGeocache, HtmlDocument doc)
+        private static void ParseName(GCGeocache gcGeocache, IHtmlDocument doc)
         {
             if (gcGeocache.IsPremium)
             {
-                var name = doc.DocumentNode.SelectSingleNode("//div[@id=\"ctl00_divContentMain\"]/h2")
-                    .InnerText;
+                var name = doc.QuerySelector("div[id=ctl00_divContentMain] h2").TextContent;
                 name = name.Substring(0, name.LastIndexOf('(')).Trim();
                 gcGeocache.Name = name;
             }
             else
             {
-                gcGeocache.Name = doc.GetElementbyId("ctl00_ContentBody_CacheName").InnerText;
+                gcGeocache.Name = doc.GetElementById("ctl00_ContentBody_CacheName").TextContent;
             }
         }
 
-        private static void ParseDescription(GCGeocache gcGeocache, HtmlDocument doc)
+        private static void ParseDescription(GCGeocache gcGeocache, IHtmlDocument doc)
         {
-            gcGeocache.Description = doc.GetElementbyId("ctl00_ContentBody_ShortDescription").InnerHtml.Trim()
-                + "<br />" + doc.GetElementbyId("ctl00_ContentBody_LongDescription").InnerHtml.Trim();
+            gcGeocache.Description = doc.GetElementById("ctl00_ContentBody_ShortDescription").InnerHtml.Trim()
+                 + "<br />" + doc.GetElementById("ctl00_ContentBody_LongDescription").InnerHtml.Trim();
         }
 
-        private void ParseHint(GCGeocache gcGeocache, HtmlDocument doc)
+        private void ParseHint(GCGeocache gcGeocache, IHtmlDocument doc)
         {
-            gcGeocache.Hint = ROT13Coder.Decode(doc.GetElementbyId("div_hint").InnerText).Trim();
+            gcGeocache.Hint = ROT13Coder.Decode(doc.GetElementById("div_hint").TextContent).Trim();
         }
 
-        private static void ParseType(GCGeocache gcGeocache, HtmlDocument doc)
+        private static void ParseType(GCGeocache gcGeocache, IHtmlDocument doc)
         {
             string type;
 
             if (gcGeocache.IsPremium)
             {
-                type = doc.GetElementbyId("ctl00_ContentBody_uxWptTypeImage").Attributes["src"].Value;
+                type = doc.GetElementById("ctl00_ContentBody_uxWptTypeImage").Attributes["src"].Value;
                 type = type.Substring(type.LastIndexOf('/') + 1);
             }
             else
             {
-                type = doc.DocumentNode.SelectSingleNode("//div[@id=\"cacheDetails\"]/p[@class=\"cacheImage\"]/a/img")
-                    .Attributes["title"].Value;
+                type = doc.QuerySelector("div[id=cacheDetails] p[class=cacheImage] a img").Attributes["title"].Value;
             }
 
             gcGeocache.Type = ToGeocacheType(type);
         }
 
-        private void ParseSize(GCGeocache geocache, HtmlDocument doc)
+        private void ParseSize(GCGeocache geocache, IHtmlDocument doc)
         {
             string size;
 
             if (geocache.IsPremium)
             {
-                size = doc.DocumentNode.SelectSingleNode("//div[@id=\"ctl00_divContentMain\"]/p/small")
-                    .InnerText.Trim();
+                size = doc.QuerySelector("div[id=ctl00_divContentMain] p small").TextContent.Trim();
             }
             else
             {
-                size = doc.DocumentNode.SelectSingleNode("//span[@class=\"minorCacheDetails\"]/small")
-                    .InnerText.Trim();
+                size = doc.QuerySelector("span[class=minorCacheDetails] small").TextContent.Trim();
             }
 
             size = size.Substring(1, size.Length - 2);
@@ -529,22 +520,22 @@ namespace GeocachingToolbox.GeocachingCom
             geocache.Size = ToGeocacheSize(size);
         }
 
-        private static void ParseStatus(GCGeocache geocache, HtmlDocument doc)
+        private static void ParseStatus(GCGeocache geocache, IHtmlDocument doc)
         {
-            var statusListItems = doc.DocumentNode.SelectNodes("//ul[@class=\"OldWarning\"]/li");
+            var statusListItems = doc.QuerySelectorAll("ul[class=OldWarning] li").ToArray();
 
             // TODO: Handle other statuses
-            if (statusListItems == null)
+            if (statusListItems.Length == 0)
             {
                 geocache.Status = GeocacheStatus.Published;
             }
-            else if (statusListItems[0].InnerText.Trim()
+            else if (statusListItems[0].TextContent.Trim()
                 == "This cache is temporarily unavailable. Read the"
                 + " logs below to read the status for this cache.")
             {
                 geocache.Status = GeocacheStatus.Disabled;
             }
-            else if (statusListItems[0].InnerText.Trim()
+            else if (statusListItems[0].TextContent.Trim()
                 == "This cache has been archived, but is available"
                 + " for viewing for archival purposes.")
             {
@@ -558,7 +549,7 @@ namespace GeocachingToolbox.GeocachingCom
 
         private GeocacheSize ToGeocacheSize(string size)
         {
-            switch(size)
+            switch (size)
             {
                 case "micro":
                     return GeocacheSize.Micro;
