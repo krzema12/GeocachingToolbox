@@ -6,7 +6,6 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace GeocachingToolbox.Opencaching
 {
@@ -92,7 +91,7 @@ namespace GeocachingToolbox.Opencaching
                 _consumerSecret, _token, _tokenSecret, "GET", timestamp, nonce, out normalized_url,
                 out normalized_params);
 
-            url = method_url + "?" + normalized_params + "&oauth_signature=" + HttpUtility.UrlEncode(signature);
+            url = method_url + "?" + normalized_params + "&oauth_signature=" + WebUtility.UrlEncode(signature);
 
             return url;
         }
@@ -115,15 +114,15 @@ namespace GeocachingToolbox.Opencaching
             try
             {
                 WebRequest request = WebRequest.Create(url);
-                request.Timeout = 15000;
+                //request.Timeout = 15000;
                 request.Proxy = null;
 
-                using (WebResponse response = request.GetResponse())
+                using (WebResponse response = request.GetResponseAsync().GetAwaiter().GetResult())
                 {
                     return ReadResponse(response);
                 }
             }
-            catch (UriFormatException)
+            catch (WebException)
             {
                 throw new WebException("Check your installation URL.");
             }
