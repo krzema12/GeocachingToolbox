@@ -1,6 +1,7 @@
 ﻿// Downloaded from https://oauth.googlecode.com/svn/code/csharp/OAuthBase.cs
 using System;
-using System.Security.Cryptography;
+using PCLCrypto;
+using static PCLCrypto.WinRTCrypto;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
@@ -98,22 +99,14 @@ namespace OAuth
         /// <param name="hashAlgorithm">The hashing algoirhtm used. If that algorithm needs some initialization, like HMAC and its derivatives, they should be initialized prior to passing it to this function</param>
         /// <param name="data">The data to hash</param>
         /// <returns>a Base64 string of the hash value</returns>
-        private string ComputeHash(HashAlgorithm hashAlgorithm, string data)
+        private string ComputeHash(MacAlgorithm macAlgorithm, string key, string data)
         {
-            if (hashAlgorithm == null)
-            {
-                throw new ArgumentNullException("hashAlgorithm");
-            }
-
-            if (string.IsNullOrEmpty(data))
-            {
-                throw new ArgumentNullException("data");
-            }
-
-            byte[] dataBuffer = System.Text.Encoding.ASCII.GetBytes(data);
-            byte[] hashBytes = hashAlgorithm.ComputeHash(dataBuffer);
-
-            return Convert.ToBase64String(hashBytes);
+            var mac = MacAlgorithmProvider.OpenAlgorithm(macAlgorithm);
+            
+            var keyMaterial = CryptographicBuffer.ConvertStringToBinary(key, Encoding.UTF8);
+            var cryptoKey = mac.CreateKey(keyMaterial);
+            var hash = CryptographicEngine.Sign(cryptoKey, Encoding.UTF8.GetBytes(data));
+            return Convert.ToBase64String(hash);
         }
 
         /// <summary>
@@ -277,9 +270,9 @@ namespace OAuth
         /// <param name="signatureBase">The signature based as produced by the GenerateSignatureBase method or by any other means</param>
         /// <param name="hash">The hash algorithm used to perform the hashing. If the hashing algorithm requires initialization or a key it should be set prior to calling this method</param>
         /// <returns>A base64 string of the hash value</returns>
-        public string GenerateSignatureUsingHash(string signatureBase, HashAlgorithm hash)
+        public string GenerateSignatureUsingHash(string signatureBase,string key, MacAlgorithm hash)
         {
-            return ComputeHash(hash, signatureBase);
+            return ComputeHash(hash,key, signatureBase);
         }
 
         /// <summary>
@@ -320,10 +313,8 @@ namespace OAuth
                 case SignatureTypes.HMACSHA1:
                     string signatureBase = GenerateSignatureBase(url, consumerKey, token, tokenSecret, httpMethod, timeStamp, nonce, HMACSHA1SignatureType, out normalizedUrl, out normalizedRequestParameters);
 
-                    HMACSHA1 hmacsha1 = new HMACSHA1();
-                    hmacsha1.Key = Encoding.ASCII.GetBytes(string.Format("{0}&{1}", UrlEncode(consumerSecret), string.IsNullOrEmpty(tokenSecret) ? "" : UrlEncode(tokenSecret)));
-
-                    return GenerateSignatureUsingHash(signatureBase, hmacsha1);
+                    var key = $"{UrlEncode(consumerSecret)}&{(string.IsNullOrEmpty(tokenSecret) ? "" : UrlEncode(tokenSecret))}";
+                    return GenerateSignatureUsingHash(signatureBase,key,MacAlgorithm.HmacSha1);
                 case SignatureTypes.RSASHA1:
                     throw new NotImplementedException();
                 default:

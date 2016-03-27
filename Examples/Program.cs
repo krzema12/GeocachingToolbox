@@ -16,11 +16,11 @@ namespace Examples
             var config = LoadConfiguration();
 
             // Geocaching.com 
-            var examples = new GeocachingComExamples(config.GCLogin, config.GCPassword);
+            //var examples = new GeocachingComExamples(config.GCLogin, config.GCPassword);
 
             // Opencaching
-            //ApiAccessKeysImpl apiKeys = new ApiAccessKeysImpl(config.OCConsumerKey, config.OCConsumerSecret);
-            //var examples = new OpencachingExamples(apiKeys);
+            ApiAccessKeysImpl apiKeys = new ApiAccessKeysImpl(config.OCConsumerKey, config.OCConsumerSecret);
+            var examples = new OpencachingExamples(apiKeys);
 
             examples.Run();
         }
