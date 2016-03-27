@@ -8,26 +8,36 @@ namespace Examples
     {
         private OCClient client;
         ApiAccessKeys m_ApiKeys;
+        IAccessTokenStore m_AccessTokenStore;
 
-        public OpencachingExamples(ApiAccessKeys apiKeys)
+        public OpencachingExamples(ApiAccessKeys apiKeys,IAccessTokenStore accessTokenStore)
         {
             m_ApiKeys = apiKeys;
+            m_AccessTokenStore = accessTokenStore;
         }
         public void Run()
         {
+            bool isAccessTokenStorePopulated = m_AccessTokenStore.Populated;
             Authenticate();
             DisplayUserInfo();
             ListNewestFoundGeocaches();
             GetDetailsForNewestFoundGeocache();
 
             Console.Write("\n\n");
+            if (!isAccessTokenStorePopulated && m_AccessTokenStore.Populated)
+            {
+                Console.WriteLine("Add these settings to your config file:");
+                Console.WriteLine("OCToken => " + m_AccessTokenStore.Token);
+                Console.WriteLine("OCTokenSecret => " + m_AccessTokenStore.TokenSecret);
+            }
+
             Console.WriteLine("Press enter to close this window...");
             Console.Read();
         }
 
         private void Authenticate()
         {
-            client = new OCClient("http://opencaching.pl/okapi/", apiAccessKeys: m_ApiKeys);
+            client = new OCClient("http://opencaching.pl/okapi/", apiAccessKeys: m_ApiKeys,tokenStore: m_AccessTokenStore);
 
             if (client.NeedsAuthorization)
             {

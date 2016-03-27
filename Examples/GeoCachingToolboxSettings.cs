@@ -10,6 +10,8 @@ namespace Examples
     {
         public string OCConsumerKey { get; set; }
         public string OCConsumerSecret { get; set; }
+        public string OCToken { get; set; }
+        public string OCTokenSecret { get; set; }
         public string GCLogin { get; set; }
         public string GCPassword { get; set; }
 

@@ -17,11 +17,12 @@ namespace Examples
 
             // Geocaching.com 
             //var examples = new GeocachingComExamples(config.GCLogin, config.GCPassword);
+            //examples.Run();
 
             // Opencaching
             ApiAccessKeysImpl apiKeys = new ApiAccessKeysImpl(config.OCConsumerKey, config.OCConsumerSecret);
-            var examples = new OpencachingExamples(apiKeys);
-
+            AccessTokenStore accessTokenStore = new AccessTokenStore(config.OCToken, config.OCTokenSecret);
+            var examples = new OpencachingExamples(apiKeys, accessTokenStore);
             examples.Run();
         }
 

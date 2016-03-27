@@ -24,7 +24,7 @@ namespace GeocachingToolbox.Opencaching
             if (connector == null)
             {
                 _connector = new OCConnector(installationUrl);
-                _tokenStore = new AccessTokenStore();
+                _tokenStore = tokenStore;
             }
             else
             {
@@ -76,6 +76,7 @@ namespace GeocachingToolbox.Opencaching
             var accessTokens = UrlParser.Parse(accessTokenResponse);
 
             _tokenStore.SetValues(accessTokens["oauth_token"], accessTokens["oauth_token_secret"]);
+            _connector.SetTokens(accessTokens["oauth_token"], accessTokens["oauth_token_secret"]);
         }
 
         public void Connect()
