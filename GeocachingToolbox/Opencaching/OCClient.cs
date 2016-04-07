@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace GeocachingToolbox.Opencaching
 {
@@ -45,12 +46,12 @@ namespace GeocachingToolbox.Opencaching
             }
         }
 
-        public string GetAuthorizationUrl()
+        public async Task<string> GetAuthorizationUrl()
         {
             var requestTokenArgs = new Dictionary<string, string>();
             requestTokenArgs.Add("oauth_callback", "oob");
             var requestTokenUrl = _connector.GetURL("services/oauth/request_token", requestTokenArgs);
-            var requestTokenResponse = _connector.GetResponse(requestTokenUrl);
+            var requestTokenResponse = await _connector.GetResponse(requestTokenUrl);
 
             _requestTokens = UrlParser.Parse(requestTokenResponse);
 
@@ -65,32 +66,32 @@ namespace GeocachingToolbox.Opencaching
             return authorizeUrl;
         }
 
-        public void EnterAuthorizationPin(string pin)
+        public async Task EnterAuthorizationPin(string pin)
         {
             var accessTokenArgs = new Dictionary<string, string>();
             accessTokenArgs.Add("oauth_verifier", pin);
             _connector.SetTokens(_requestTokens["oauth_token"], _requestTokens["oauth_token_secret"]);
             var accessTokenUrl = _connector.GetURL("services/oauth/access_token", accessTokenArgs);
 
-            var accessTokenResponse = _connector.GetResponse(accessTokenUrl);
+            var accessTokenResponse = await _connector.GetResponse(accessTokenUrl);
             var accessTokens = UrlParser.Parse(accessTokenResponse);
 
             _tokenStore.SetValues(accessTokens["oauth_token"], accessTokens["oauth_token_secret"]);
             _connector.SetTokens(accessTokens["oauth_token"], accessTokens["oauth_token_secret"]);
         }
 
-        public void Connect()
+        public async Task Connect()
         {
-            GetUserInfo();
+            await GetUserInfo();
         }
 
-        private void GetUserInfo()
+        private async Task GetUserInfo()
         {
             var userInfoArgs = new Dictionary<string, string>();
             userInfoArgs.Add("fields", "uuid|username|caches_found");
-            var userInfoUrl = _connector.GetURL("services/users/user", userInfoArgs);
+            var userInfoUrl =  _connector.GetURL("services/users/user", userInfoArgs);
 
-            var userInfoResponse = _connector.GetResponse(userInfoUrl);
+            var userInfoResponse = await _connector.GetResponse(userInfoUrl);
             var userInfoJson = JObject.Parse(userInfoResponse);
 
             User = new OCUser(userInfoJson["username"].Value<string>(),
@@ -98,13 +99,13 @@ namespace GeocachingToolbox.Opencaching
                 userInfoJson["uuid"].Value<string>());
         }
 
-        public override IEnumerable<T> GetFoundGeocaches<T>()
+        public override async Task<IEnumerable<T>> GetFoundGeocachesAsync<T>()
         {
             var userLogsArgs = new Dictionary<string, string>();
             userLogsArgs.Add("user_uuid", ((OCUser)User).Uuid);
             var userLogsUrl = _connector.GetURL("services/logs/userlogs", userLogsArgs);
 
-            var userLogsResponse = _connector.GetResponse(userLogsUrl);
+            var userLogsResponse = await _connector.GetResponse(userLogsUrl);
             var found = new List<OCLog>();
             var userLogsJson = JArray.Parse(userLogsResponse);
 
@@ -141,7 +142,7 @@ namespace GeocachingToolbox.Opencaching
             }
         }
 
-        public override void GetGeocacheDetails<T>(T geocache)
+        public override async Task GetGeocacheDetailsAsync<T>(T geocache)
         {
             var ocGeocache = geocache as OCGeocache;
 
@@ -151,7 +152,7 @@ namespace GeocachingToolbox.Opencaching
                 + "terrain|date_hidden|owner|description|hint2");
             var geocacheDetailsUrl = _connector.GetURL("services/caches/geocache", geocacheDetailsArgs);
 
-            var geocacheDetailsResponse = _connector.GetResponse(geocacheDetailsUrl);
+            var geocacheDetailsResponse = await _connector.GetResponse(geocacheDetailsUrl);
             var json = JObject.Parse(geocacheDetailsResponse);
 
             ocGeocache.Code = json["code"].Value<string>();
@@ -216,7 +217,7 @@ namespace GeocachingToolbox.Opencaching
             }
         }
 
-        public override void PostGeocacheLog<T>(T geocache, GeocacheLogType logType, DateTime date, string description)
+        public override async Task PostGeocacheLogAsync<T>(T geocache, GeocacheLogType logType, DateTime date, string description)
         {
             var ocGeocache = geocache as OCGeocache;
 
@@ -228,7 +229,7 @@ namespace GeocachingToolbox.Opencaching
             args.Add("when", date.ToString());
             var url = _connector.GetURL("services/logs/submit", args);
 
-            var response = _connector.GetResponse(url);
+            var response = await _connector.GetResponse(url);
             var json = JObject.Parse(response);
 
             if (json["success"] == null || json["success"].Value<string>() != "True")
@@ -237,7 +238,7 @@ namespace GeocachingToolbox.Opencaching
             }
         }
 
-        public override void GetTrackableDetails<T>(T trackable)
+        public override Task GetTrackableDetailsAsync<T>(T trackable)
         {
             throw new NotImplementedException();
         }
@@ -259,12 +260,12 @@ namespace GeocachingToolbox.Opencaching
             }
         }
 
-        public override void PostTrackableLog<T>(T trackable, TrackableLogType logType, DateTime date, string description)
+        public override Task PostTrackableLogAsync<T>(T trackable, TrackableLogType logType, DateTime date, string description)
         {
             throw new NotImplementedException();
         }
 
-        public override IEnumerable<T> GetNearestGeocaches<T>(Location location)
+        public override async Task<IEnumerable<T>> GetNearestGeocachesAsync<T>(Location location)
         {
             var nearestGeocachesArgs = new Dictionary<string, string>();
             nearestGeocachesArgs.Add("search_method", "services/caches/search/nearest");
@@ -272,12 +273,12 @@ namespace GeocachingToolbox.Opencaching
                 location.Latitude.ToString(CultureInfo.InvariantCulture),
                 location.Longitude.ToString(CultureInfo.InvariantCulture)));
             nearestGeocachesArgs.Add("retr_method", "services/caches/geocaches");
-            nearestGeocachesArgs.Add("retr_params", @"{""fields"":""name|location|type""}");
+            nearestGeocachesArgs.Add("retr_params", @"{""fields"":""name|location|owner|type""}");
             nearestGeocachesArgs.Add("wrap", "false");
 
             var nearestGeocachesUrl = _connector.GetURL("services/caches/shortcuts/search_and_retrieve", nearestGeocachesArgs);
 
-            var nearestGeocachesResponse = _connector.GetResponse(nearestGeocachesUrl);
+            var nearestGeocachesResponse = await _connector.GetResponse(nearestGeocachesUrl);
             var json = JObject.Parse(nearestGeocachesResponse);
 
             var list = new List<OCGeocache>();
@@ -289,6 +290,9 @@ namespace GeocachingToolbox.Opencaching
                 newCache.Code = ((JProperty)cache).Name;
                 newCache.Name = cache.First["name"].Value<string>();
                 newCache.Type = StringToGeocacheType(cache.First["type"].Value<string>());
+
+                newCache.Owner = new OCUser(cache.First["owner"]["username"].Value<string>(),
+                -1, cache.First["owner"]["uuid"].Value<string>());
 
                 var coordsRaw = cache.First["location"].Value<string>();
                 var coords = coordsRaw.Split('|');

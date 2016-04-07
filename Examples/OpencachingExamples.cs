@@ -1,6 +1,7 @@
 ﻿using System;
 using GeocachingToolbox.Opencaching;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Examples
 {
@@ -20,8 +21,8 @@ namespace Examples
             bool isAccessTokenStorePopulated = m_AccessTokenStore.Populated;
             Authenticate();
             DisplayUserInfo();
-            ListNewestFoundGeocaches();
-            GetDetailsForNewestFoundGeocache();
+            ListNewestFoundGeocaches().GetAwaiter().GetResult();
+            GetDetailsForNewestFoundGeocache().GetAwaiter().GetResult();
 
             Console.Write("\n\n");
             if (!isAccessTokenStorePopulated && m_AccessTokenStore.Populated)
@@ -43,10 +44,10 @@ namespace Examples
             {
                 Console.Write("Please open this link in your browser: " + client.GetAuthorizationUrl () + " and enter pin here:");
                 string pin = Console.ReadLine();
-                client.EnterAuthorizationPin(pin);
+                client.EnterAuthorizationPin(pin).GetAwaiter().GetResult();
             }
 
-            client.Connect();
+            client.Connect().GetAwaiter().GetResult();
         }
 
         private void DisplayUserInfo()
@@ -54,11 +55,11 @@ namespace Examples
             Console.WriteLine("Hello {0}! So far you've found {1} geocaches.", client.User.Name, client.User.FoundGeocachesCount);
         }
 
-        private void ListNewestFoundGeocaches()
+        private async Task ListNewestFoundGeocaches()
         {
             Console.WriteLine("Here are some geocaches you've recently found:");
-
-            var foundLogsNewestTen = client.GetFoundGeocaches<OCLog>().Take(10);
+            var found = await client.GetFoundGeocachesAsync<OCLog>();
+            var foundLogsNewestTen = found.Take(10);
 
             foreach (var log in foundLogsNewestTen)
             {
@@ -67,9 +68,10 @@ namespace Examples
             }
         }
 
-        private void GetDetailsForNewestFoundGeocache()
+        private async Task GetDetailsForNewestFoundGeocache()
         {
-            var newestFoundLog = client.GetFoundGeocaches<OCLog>().FirstOrDefault();
+            var found = await client.GetFoundGeocachesAsync<OCLog>();
+            var newestFoundLog = found.FirstOrDefault();
 
             if (newestFoundLog == null)
             {
@@ -77,7 +79,7 @@ namespace Examples
             }
 
             var newestFoundCache = newestFoundLog.Thing as OCGeocache;
-            client.GetGeocacheDetails<OCGeocache>(newestFoundCache);
+            await client.GetGeocacheDetailsAsync<OCGeocache>(newestFoundCache);
 
             Console.WriteLine("Name:               {0}", newestFoundCache.Name);
             Console.WriteLine("Type:               {0}", newestFoundCache.Type);

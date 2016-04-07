@@ -89,8 +89,8 @@ namespace GeocachingToolbox.UnitTests.GeocachingCom
             };
         };
 
-        Because of = () =>
-            _result = _gcClient.GetNearestGeocaches<GCGeocache>(new Location(54.371676M, 18.612415M));
+        Because of = async() =>
+            _result = await _gcClient.GetNearestGeocachesAsync<GCGeocache>(new Location(54.371676M, 18.612415M));
 
         It should_return_a_list_of_5_caches = () =>
             _result.ShouldEqualRecursively(_expectedResult);

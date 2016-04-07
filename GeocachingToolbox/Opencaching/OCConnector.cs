@@ -109,7 +109,7 @@ namespace GeocachingToolbox.Opencaching
             return s;
         }
 
-        public string GetResponse(string url)
+        public async Task<string> GetResponse(string url)
         {
             try
             {
@@ -117,7 +117,7 @@ namespace GeocachingToolbox.Opencaching
                 //request.Timeout = 15000;
                 request.Proxy = null;
 
-                using (WebResponse response = request.GetResponseAsync().GetAwaiter().GetResult())
+                using (WebResponse response = await request.GetResponseAsync())
                 {
                     return ReadResponse(response);
                 }

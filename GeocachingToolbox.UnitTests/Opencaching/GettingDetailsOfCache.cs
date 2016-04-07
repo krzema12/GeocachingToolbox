@@ -47,7 +47,7 @@ namespace GeocachingToolbox.UnitTests.Opencaching
 
         Because of = () =>
         {
-            _ocClient.GetGeocacheDetails(_subject);
+            _ocClient.GetGeocacheDetailsAsync(_subject);
         };
 
         It should_return_an_object_with_geocache_details = () =>

@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using AngleSharp.Dom.Html;
 using AngleSharp.Parser.Html;
 
@@ -25,11 +26,11 @@ namespace GeocachingToolbox.GeocachingCom
             }
         }
 
-        public void Login(string login, string password)
+        public async Task Login(string login, string password)
         {
             try
             {
-                var code = _connector.Login(login, password);
+                var code = await _connector.Login(login, password);
 
                 if (code.Contains("Log out"))
                 {
@@ -56,9 +57,9 @@ namespace GeocachingToolbox.GeocachingCom
             }
         }
 
-        public override IEnumerable<T> GetFoundGeocaches<T>()
+        public override async Task<IEnumerable<T>> GetFoundGeocachesAsync<T>()
         {
-            var html = _connector.GetPage("my/logs.aspx?s=1&lt=2");
+            var html = await _connector.GetPage("my/logs.aspx?s=1&lt=2");
             var found = new List<GCLog>();
 
             var parser = new HtmlParser();
@@ -119,12 +120,12 @@ namespace GeocachingToolbox.GeocachingCom
             return (IEnumerable<T>)found;
         }
 
-        public override IEnumerable<T> GetNearestGeocaches<T>(Location location)
+        public override async Task<IEnumerable<T>> GetNearestGeocachesAsync<T>(Location location)
         {
             var url = string.Format("seek/nearest.aspx?lat={0}&lng={1}&ex=0",
                 location.Latitude.ToString(CultureInfo.InvariantCulture),
                 location.Longitude.ToString(CultureInfo.InvariantCulture));
-            var html = _connector.GetPage(url);
+            var html = await _connector.GetPage(url);
 
             var parser = new HtmlParser();
 
@@ -183,12 +184,12 @@ namespace GeocachingToolbox.GeocachingCom
             return (IEnumerable<T>)nearest;
         }
 
-        public override void PostGeocacheLog<T>(T geocache, GeocacheLogType logType, DateTime date, string description)
+        public override async Task PostGeocacheLogAsync<T>(T geocache, GeocacheLogType logType, DateTime date, string description)
         {
             if (string.IsNullOrEmpty(geocache.Code) == false)
             {
                 var address = "seek/log.aspx?wp=" + geocache.Code;
-                var html = _connector.GetPage(address);
+                var html = await _connector.GetPage(address);
 
                 var parser = new HtmlParser();
                 var doc = parser.Parse(html);
@@ -217,11 +218,11 @@ namespace GeocachingToolbox.GeocachingCom
             }
         }
 
-        public override void PostTrackableLog<T>(T trackable, TrackableLogType logType, DateTime date, string description)
+        public override async Task PostTrackableLogAsync<T>(T trackable, TrackableLogType logType, DateTime date, string description)
         {
             if (string.IsNullOrEmpty(trackable.TrackingCode) == false)
             {
-                var detailsPageHtml = _connector.GetPage("track/details.aspx?tracker=" + trackable.TrackingCode);
+                var detailsPageHtml = await _connector.GetPage("track/details.aspx?tracker=" + trackable.TrackingCode);
                 var parser = new HtmlParser();
                 var detailsPageDoc = parser.Parse(detailsPageHtml);
 
@@ -233,7 +234,7 @@ namespace GeocachingToolbox.GeocachingCom
                 var logPageAddress = detailsPageDoc.GetElementById("ctl00_ContentBody_LogLink").Attributes["href"].Value;
                 logPageAddress = "track/" + WebUtility.HtmlDecode(RemoveBeginningOfAddress(logPageAddress));
 
-                var loggingPageHtml = _connector.GetPage(logPageAddress);
+                var loggingPageHtml = await _connector.GetPage(logPageAddress);
                 var loggingPageDoc = parser.Parse(loggingPageHtml);
 
                 IDictionary<string, string> parameters = new Dictionary<string, string>
@@ -304,18 +305,18 @@ namespace GeocachingToolbox.GeocachingCom
             }
         }
 
-        public override void GetGeocacheDetails<T>(T geocache)
+        public override async Task GetGeocacheDetailsAsync<T>(T geocache)
         {
             string html = "";
             var gcGeocache = geocache as GCGeocache;
 
             if (string.IsNullOrEmpty(geocache.Code) == false)
             {
-                html = _connector.GetPage("geocache/" + geocache.Code);
+                html = await _connector.GetPage("geocache/" + geocache.Code);
             }
             else if (string.IsNullOrEmpty(gcGeocache.DetailsUrl) == false)
             {
-                html = _connector.GetPage(gcGeocache.DetailsUrl);
+                html = await _connector.GetPage(gcGeocache.DetailsUrl);
             }
             else
             {
@@ -345,11 +346,11 @@ namespace GeocachingToolbox.GeocachingCom
             }
         }
 
-        public override void GetTrackableDetails<T>(T trackable)
+        public override async Task GetTrackableDetailsAsync<T>(T trackable)
         {
             if (string.IsNullOrEmpty(trackable.TrackingCode) == false)
             {
-                var detailsPageHtml = _connector.GetPage("track/details.aspx?tracker=" + trackable.TrackingCode);
+                var detailsPageHtml = await _connector.GetPage("track/details.aspx?tracker=" + trackable.TrackingCode);
                 var parser = new HtmlParser();
                 parser.Parse(detailsPageHtml);
             }
