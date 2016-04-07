@@ -3,6 +3,7 @@ using GeocachingToolbox.GeocachingCom;
 using Machine.Specifications;
 using Rhino.Mocks;
 using System;
+using System.Security.Cryptography.X509Certificates;
 
 namespace GeocachingToolbox.UnitTests.GeocachingCom
 {
@@ -27,8 +28,8 @@ namespace GeocachingToolbox.UnitTests.GeocachingCom
                 .ReturnContentOf(@"GeocachingCom\WebpageContents\LoginSuccessfulAndUserProfile.html").Repeat.Once();
         };
 
-        Because of = () =>
-            _gcClient.Login("Krzema", "CorrectPassword");
+        Because of = async() =>
+            await _gcClient.Login("Krzema", "CorrectPassword");
 
         It should_call_connectors_Login_method = () =>
             _stubConnector.VerifyAllExpectations();
@@ -50,7 +51,7 @@ namespace GeocachingToolbox.UnitTests.GeocachingCom
         };
 
         Because of = () =>
-            _exception = Catch.Exception(() => _gcClient.Login("Krzema", "IncorrectPassword"));
+            _exception = Catch.Exception( () => _gcClient.Login("Krzema", "IncorrectPassword").Await());
 
         It should_throw_IncorrectCredentialsException = () =>
             _exception.ShouldBeOfExactType<IncorrectCredentialsException>();
@@ -70,7 +71,7 @@ namespace GeocachingToolbox.UnitTests.GeocachingCom
         };
 
         Because of = () =>
-            _exception = Catch.Exception(() => _gcClient.Login("Krzema", "Anything"));
+            _exception = Catch.Exception(() => _gcClient.Login("Krzema", "Anything").Await());
 
         It should_throw_ConnectionProblemException = () =>
             _exception.ShouldBeOfExactType<ConnectionProblemException>();

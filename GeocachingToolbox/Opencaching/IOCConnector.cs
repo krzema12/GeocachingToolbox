@@ -13,6 +13,6 @@ namespace GeocachingToolbox.Opencaching
         void SetConsumerKeyAndSecret(string consumerKey, string consumerSecret);
         void SetTokens(string token, string tokenSecret);
         string GetURL(string method, Dictionary<string, string> args = null);
-        string GetResponse(string url);
+        Task<string> GetResponse(string url);
     }
 }

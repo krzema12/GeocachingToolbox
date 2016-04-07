@@ -5,12 +5,18 @@ using Rhino.Mocks.Interfaces;
 using System;
 using System.IO;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace GeocachingToolbox.UnitTests
 {
     static class MspecExtensionMethods
     {
-        public static IMethodOptions<string> ReturnContentOf(this IMethodOptions<string> subject, string filePath)
+        public static IMethodOptions<Task<string>> ReturnContentOf(this IMethodOptions<Task<string>> subject, string filePath)
+        {
+            return subject.Return(Task.FromResult(ReadContent(filePath)));// ReturnContentOf(subject, filePath);
+        } 
+
+        private static string ReadContent(string filePath)
         {
             var assembly = Assembly.GetExecutingAssembly();
             var dottedFilePath = filePath.Replace('\\', '.');
@@ -28,10 +34,9 @@ namespace GeocachingToolbox.UnitTests
             catch (ArgumentNullException)
             {
                 throw new FileNotFoundException("Make sure that the file '" + filePath
-                    + "' exists and has 'Build Action' set to 'Embedded Resource'.");
+                                                + "' exists and has 'Build Action' set to 'Embedded Resource'.");
             }
-
-            return subject.Return(content);
+            return content;
         }
 
         [AssertionMethod]

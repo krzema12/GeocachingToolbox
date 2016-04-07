@@ -52,8 +52,8 @@ namespace GeocachingToolbox.UnitTests.Opencaching
             };
         };
 
-        Because of = () =>
-            _result = _ocClient.GetFoundGeocaches<OCLog>();
+        Because of = async() =>
+            _result = await _ocClient.GetFoundGeocachesAsync<OCLog>();
 
         It should_return_a_list_of_3_logs_of_caches = () =>
             _result.ShouldEqualRecursively(_expectedResult);

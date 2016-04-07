@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace GeocachingToolbox.GeocachingCom
 {
@@ -10,19 +11,19 @@ namespace GeocachingToolbox.GeocachingCom
         private const string UrlPrefix = "http://www.geocaching.com/";
         private WebBrowserSimulator webBrowser;
 
-        public string GetPage(string url)
+        public Task<string> GetPage(string url)
         {
             var response = webBrowser.GetRequest(UrlPrefix + url);
             return response;
         }
 
-        public string PostToPage(string url, IDictionary<string, string> parameters)
+        public Task<string> PostToPage(string url, IDictionary<string, string> parameters)
         {
             var response = webBrowser.PostRequest(UrlPrefix + url, parameters);
             return response;
         }
 
-        public string Login(string login, string password)
+        public Task<string> Login(string login, string password)
         {
             IDictionary<string, string> parameters = new Dictionary<string, string>
             {

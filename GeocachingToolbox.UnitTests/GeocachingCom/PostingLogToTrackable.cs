@@ -43,7 +43,7 @@ namespace GeocachingToolbox.UnitTests.GeocachingCom
         };
 
         Because of = () =>
-            _gcClient.PostTrackableLog(_trackableToBeLogged, _logType, _date, _description);
+            _gcClient.PostTrackableLogAsync(_trackableToBeLogged, _logType, _date, _description);
 
         It should_call_connectors_GetPage_and_PostToPage_methods = () =>
             _stubConnector.VerifyAllExpectations();
@@ -78,7 +78,7 @@ namespace GeocachingToolbox.UnitTests.GeocachingCom
         };
 
         Because of = () =>
-            _exception = Catch.Exception(() => _gcClient.PostTrackableLog(_trackableToBeLogged, _logType, _date, _description));
+            _exception = Catch.Exception(() => _gcClient.PostTrackableLogAsync(_trackableToBeLogged, _logType, _date, _description).Await());
 
         It should_call_connectors_GetPage_method = () =>
             _stubConnector.VerifyAllExpectations();

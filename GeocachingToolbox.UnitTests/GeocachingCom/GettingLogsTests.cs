@@ -100,8 +100,8 @@ namespace GeocachingToolbox.UnitTests.GeocachingCom
             };
         };
 
-        Because of = () =>
-            _result = _gcClient.GetFoundGeocaches<GCLog>();
+        Because of = async () =>
+            _result =  await _gcClient.GetFoundGeocachesAsync<GCLog>();
 
         It should_return_a_list_of_8_logs_of_caches_of_various_type_and_status = () =>
             _result.ShouldEqualRecursively(_expectedResult);

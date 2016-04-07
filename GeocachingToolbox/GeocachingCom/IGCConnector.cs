@@ -8,8 +8,8 @@ namespace GeocachingToolbox.GeocachingCom
 {
     public interface IGCConnector
     {
-        string Login(string login, string password);
-        string GetPage(string url);
-        string PostToPage(string url, IDictionary<string, string> parameters);
+        Task<string> Login(string login, string password);
+        Task<string> GetPage(string url);
+        Task<string> PostToPage(string url, IDictionary<string, string> parameters);
     }
 }

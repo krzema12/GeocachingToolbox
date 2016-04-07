@@ -52,7 +52,7 @@ namespace GeocachingToolbox.UnitTests.GeocachingCom
         };
 
         Because of = () =>
-            _gcClient.GetGeocacheDetails(_subject);
+            _gcClient.GetGeocacheDetailsAsync(_subject);
 
         It should_return_an_object_with_geocache_details = () =>
             _subject.ShouldEqualRecursively(_expectedResult);
