@@ -1,37 +1,53 @@
 ﻿using System;
 using GeocachingToolbox.Opencaching;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Examples
 {
     class OpencachingExamples
     {
         private OCClient client;
+        ApiAccessKeys m_ApiKeys;
+        IAccessTokenStore m_AccessTokenStore;
 
+        public OpencachingExamples(ApiAccessKeys apiKeys,IAccessTokenStore accessTokenStore)
+        {
+            m_ApiKeys = apiKeys;
+            m_AccessTokenStore = accessTokenStore;
+        }
         public void Run()
         {
+            bool isAccessTokenStorePopulated = m_AccessTokenStore.Populated;
             Authenticate();
             DisplayUserInfo();
-            ListNewestFoundGeocaches();
-            GetDetailsForNewestFoundGeocache();
+            ListNewestFoundGeocaches().GetAwaiter().GetResult();
+            GetDetailsForNewestFoundGeocache().GetAwaiter().GetResult();
 
             Console.Write("\n\n");
+            if (!isAccessTokenStorePopulated && m_AccessTokenStore.Populated)
+            {
+                Console.WriteLine("Add these settings to your config file:");
+                Console.WriteLine("OCToken => " + m_AccessTokenStore.Token);
+                Console.WriteLine("OCTokenSecret => " + m_AccessTokenStore.TokenSecret);
+            }
+
             Console.WriteLine("Press enter to close this window...");
             Console.Read();
         }
 
         private void Authenticate()
         {
-            client = new OCClient("http://opencaching.pl/okapi/");
+            client = new OCClient("http://opencaching.pl/okapi/", apiAccessKeys: m_ApiKeys,tokenStore: m_AccessTokenStore);
 
             if (client.NeedsAuthorization)
             {
                 Console.Write("Please open this link in your browser: " + client.GetAuthorizationUrl () + " and enter pin here:");
                 string pin = Console.ReadLine();
-                client.EnterAuthorizationPin(pin);
+                client.EnterAuthorizationPin(pin).GetAwaiter().GetResult();
             }
 
-            client.Connect();
+            client.Connect().GetAwaiter().GetResult();
         }
 
         private void DisplayUserInfo()
@@ -39,11 +55,11 @@ namespace Examples
             Console.WriteLine("Hello {0}! So far you've found {1} geocaches.", client.User.Name, client.User.FoundGeocachesCount);
         }
 
-        private void ListNewestFoundGeocaches()
+        private async Task ListNewestFoundGeocaches()
         {
             Console.WriteLine("Here are some geocaches you've recently found:");
-
-            var foundLogsNewestTen = client.GetFoundGeocaches<OCLog>().Take(10);
+            var found = await client.GetFoundGeocachesAsync<OCLog>();
+            var foundLogsNewestTen = found.Take(10);
 
             foreach (var log in foundLogsNewestTen)
             {
@@ -52,9 +68,10 @@ namespace Examples
             }
         }
 
-        private void GetDetailsForNewestFoundGeocache()
+        private async Task GetDetailsForNewestFoundGeocache()
         {
-            var newestFoundLog = client.GetFoundGeocaches<OCLog>().FirstOrDefault();
+            var found = await client.GetFoundGeocachesAsync<OCLog>();
+            var newestFoundLog = found.FirstOrDefault();
 
             if (newestFoundLog == null)
             {
@@ -62,7 +79,7 @@ namespace Examples
             }
 
             var newestFoundCache = newestFoundLog.Thing as OCGeocache;
-            client.GetGeocacheDetails<OCGeocache>(newestFoundCache);
+            await client.GetGeocacheDetailsAsync<OCGeocache>(newestFoundCache);
 
             Console.WriteLine("Name:               {0}", newestFoundCache.Name);
             Console.WriteLine("Type:               {0}", newestFoundCache.Type);

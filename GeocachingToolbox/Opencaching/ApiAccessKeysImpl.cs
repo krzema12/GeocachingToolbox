@@ -1,27 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GeocachingToolbox.Opencaching
+﻿namespace GeocachingToolbox.Opencaching
 {
-    class ApiAccessKeysImpl : ApiAccessKeys
+    public class ApiAccessKeysImpl : ApiAccessKeys
     {
-        // Paste your consumer key and consumer secret here to start developing! See http://opencaching.pl/okapi/signup.html.
-        public string ConsumerKey
+        public ApiAccessKeysImpl(string consumerKey, string consumerSecret)
         {
-            get
-            {
-                throw new NotImplementedException("Paste your consumer key here!");
-            }
+            ConsumerKey = consumerKey;
+            ConsumerSecret = consumerSecret;
         }
-        public string ConsumerSecret
+
+        public ApiAccessKeysImpl()
         {
-            get
-            {
-                throw new NotImplementedException("Paste your consumer secret here!");
-            }
+            
         }
+        public string ConsumerKey { get; }
+        public string ConsumerSecret { get; }
     }
 }

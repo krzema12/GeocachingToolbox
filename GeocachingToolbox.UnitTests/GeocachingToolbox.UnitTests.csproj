@@ -11,6 +11,14 @@
     <AssemblyName>GeocachingToolbox.UnitTests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,33 +38,46 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="KellermanSoftware.Compare-NET-Objects">
-      <HintPath>..\packages\CompareNETObjects.3.02.0.0\lib\net45\KellermanSoftware.Compare-NET-Objects.dll</HintPath>
+    <Reference Include="KellermanSoftware.Compare-NET-Objects, Version=3.5.0.0, Culture=neutral, PublicKeyToken=d970ace04cc85217, processorArchitecture=MSIL">
+      <HintPath>..\packages\CompareNETObjects.3.05.0.0\lib\net45\KellermanSoftware.Compare-NET-Objects.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Machine.Specifications">
-      <HintPath>..\packages\Machine.Specifications.0.8.3\lib\net45\Machine.Specifications.dll</HintPath>
+    <Reference Include="Machine.Specifications, Version=0.11.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Machine.Specifications.0.11.0\lib\net45\Machine.Specifications.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Machine.Specifications.Clr4">
-      <HintPath>..\packages\Machine.Specifications.0.8.3\lib\net45\Machine.Specifications.Clr4.dll</HintPath>
+    <Reference Include="Machine.Specifications.Should, Version=0.11.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Machine.Specifications.Should.0.11.0\lib\net45\Machine.Specifications.Should.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Machine.Specifications.Should">
-      <HintPath>..\packages\Machine.Specifications.Should.0.7.2\lib\net45\Machine.Specifications.Should.dll</HintPath>
-    </Reference>
-    <Reference Include="Rhino.Mocks">
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Rhino.Mocks, Version=3.6.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
       <HintPath>..\packages\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Serialization" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GeocachingCom\EncodeImageInBase64.cs" />
+    <Compile Include="GeocachingCom\ExtractViewstatesFromPage.cs" />
+    <Compile Include="GeocachingCom\GettingCachesFromMap.cs" />
     <Compile Include="GeocachingCom\GettingDetailsOfPremiumCacheByCode.cs" />
     <Compile Include="GeocachingCom\GettingDetailsOfCacheByCode.cs" />
     <Compile Include="GeocachingCom\GettingLogsTests.cs" />
+    <Compile Include="GeocachingCom\TestTiles.cs" />
+    <Compile Include="GeocachingCom\WebpageContents\GC2JVEH\GC2JVEH.cs" />
+    <Compile Include="GeocachingCom\WebpageContents\GC3RMAT\GC3RMAT.cs" />
+    <Compile Include="MockedGCCache.cs" />
     <Compile Include="Opencaching\ApiAccessKeysForTests.cs" />
     <Compile Include="TextComparisonToolsTests.cs" />
     <EmbeddedResource Include="Opencaching\JsonResponses\GeocacheDetails.json" />
@@ -74,7 +95,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Opencaching\JsonResponses\NonemptyFoundGeocaches.json" />
     <EmbeddedResource Include="Opencaching\JsonResponses\UserInfo.json" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GeocachingToolbox\GeocachingToolbox.csproj">
@@ -118,6 +138,60 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="GeocachingCom\WebpageContents\TrackableDoesNotExist.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GeocachingCom\WebpageContents\LiveMap.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GeocachingCom\WebpageContents\GC3RMAT\GC3RMAT.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GeocachingCom\WebpageContents\GC3RMAT\624e3701-540b-43b1-b676-296ddab86de3.jpg" />
+    <EmbeddedResource Include="GeocachingCom\WebpageContents\GC3RMAT\d08ba397-06dc-48e9-bf1a-47893ace6241.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GeocachingCom\WebpageContents\Preferences.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <EmbeddedResource Include="GeocachingCom\WebpageContents\Tiles\Set1\map_8460_5509_14.json" />
+    <EmbeddedResource Include="GeocachingCom\WebpageContents\Tiles\Set1\map_8461_5509_14.json" />
+    <EmbeddedResource Include="GeocachingCom\WebpageContents\Tiles\Set1\map_8461_5510_14.json" />
+    <EmbeddedResource Include="GeocachingCom\WebpageContents\Tiles\Set1\map_8462_5509_14.json" />
+    <EmbeddedResource Include="GeocachingCom\WebpageContents\Tiles\Set1\map_8462_5510_14.json" />
+    <EmbeddedResource Include="GeocachingCom\WebpageContents\Tiles\Set2\map_8460_5509_14.json" />
+    <EmbeddedResource Include="GeocachingCom\WebpageContents\Tiles\Set2\map_8461_5509_14.json" />
+    <EmbeddedResource Include="GeocachingCom\WebpageContents\Tiles\Set2\map_8461_5510_14.json" />
+    <EmbeddedResource Include="GeocachingCom\WebpageContents\Tiles\Set2\map_8462_5509_14.json" />
+    <EmbeddedResource Include="GeocachingCom\WebpageContents\Tiles\Set2\map_8462_5510_14.json" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GeocachingCom\WebpageContents\Tiles\Set1\map_8460_5509_14.png" />
+    <EmbeddedResource Include="GeocachingCom\WebpageContents\Tiles\Set1\map_8460_5510_14.png" />
+    <EmbeddedResource Include="GeocachingCom\WebpageContents\Tiles\Set1\map_8461_5509_14.png" />
+    <EmbeddedResource Include="GeocachingCom\WebpageContents\Tiles\Set1\map_8461_5510_14.png" />
+    <EmbeddedResource Include="GeocachingCom\WebpageContents\Tiles\Set1\map_8462_5509_14.png" />
+    <EmbeddedResource Include="GeocachingCom\WebpageContents\Tiles\Set1\map_8462_5510_14.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GeocachingCom\WebpageContents\Tiles\Set2\map_8460_5509_14.png" />
+    <EmbeddedResource Include="GeocachingCom\WebpageContents\Tiles\Set2\map_8460_5510_14.png" />
+    <EmbeddedResource Include="GeocachingCom\WebpageContents\Tiles\Set2\map_8461_5509_14.png" />
+    <EmbeddedResource Include="GeocachingCom\WebpageContents\Tiles\Set2\map_8461_5510_14.png" />
+    <EmbeddedResource Include="GeocachingCom\WebpageContents\Tiles\Set2\map_8462_5509_14.png" />
+    <EmbeddedResource Include="GeocachingCom\WebpageContents\Tiles\Set2\map_8462_5510_14.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GeocachingCom\WebpageContents\GC2JVEH\GC2JVEH.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GeocachingCom\WebpageContents\Dummy.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GeocachingCom\WebpageContents\LoginSuccessfulAndUserProfileWith0CacheFound.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

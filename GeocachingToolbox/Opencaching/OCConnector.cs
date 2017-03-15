@@ -1,12 +1,11 @@
-﻿using OAuth;
-using System;
+﻿using System;
+using OAuth;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
+using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace GeocachingToolbox.Opencaching
 {
@@ -92,7 +91,7 @@ namespace GeocachingToolbox.Opencaching
                 _consumerSecret, _token, _tokenSecret, "GET", timestamp, nonce, out normalized_url,
                 out normalized_params);
 
-            url = method_url + "?" + normalized_params + "&oauth_signature=" + HttpUtility.UrlEncode(signature);
+            url = method_url + "?" + normalized_params + "&oauth_signature=" + WebUtility.UrlEncode(signature);
 
             return url;
         }
@@ -110,20 +109,26 @@ namespace GeocachingToolbox.Opencaching
             return s;
         }
 
-        public string GetResponse(string url)
+        public async Task<string> GetResponse(string url, CancellationToken ct)
         {
             try
             {
-                WebRequest request = WebRequest.Create(url);
-                request.Timeout = 15000;
-                request.Proxy = null;
+                var client = new HttpClient();
+                var data = await client.GetAsync(url, HttpCompletionOption.ResponseContentRead, ct);
 
-                using (WebResponse response = request.GetResponse())
-                {
-                    return ReadResponse(response);
-                }
+                return await data.Content.ReadAsStringAsync();
+
+
+                //WebRequest request = WebRequest.Create(url);
+                ////request.Timeout = 15000;
+                //request.Proxy = null;
+
+                //using (WebResponse response = await request.GetResponseAsync())
+                //{
+                //    return ReadResponse(response);
+                //}
             }
-            catch (UriFormatException)
+            catch (WebException)
             {
                 throw new WebException("Check your installation URL.");
             }

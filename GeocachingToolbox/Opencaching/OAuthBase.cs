@@ -1,9 +1,10 @@
 ﻿// Downloaded from https://oauth.googlecode.com/svn/code/csharp/OAuthBase.cs
 using System;
-using System.Security.Cryptography;
+using PCLCrypto;
+using static PCLCrypto.WinRTCrypto;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
-using System.Web;
 
 namespace OAuth
 {
@@ -93,34 +94,26 @@ namespace OAuth
         protected string unreservedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~";
 
         /// <summary>
-        /// Helper function to compute a hash value
+        /// Helper function to compute a hash Value
         /// </summary>
         /// <param name="hashAlgorithm">The hashing algoirhtm used. If that algorithm needs some initialization, like HMAC and its derivatives, they should be initialized prior to passing it to this function</param>
         /// <param name="data">The data to hash</param>
-        /// <returns>a Base64 string of the hash value</returns>
-        private string ComputeHash(HashAlgorithm hashAlgorithm, string data)
+        /// <returns>a Base64 string of the hash Value</returns>
+        private string ComputeHash(MacAlgorithm macAlgorithm, string key, string data)
         {
-            if (hashAlgorithm == null)
-            {
-                throw new ArgumentNullException("hashAlgorithm");
-            }
-
-            if (string.IsNullOrEmpty(data))
-            {
-                throw new ArgumentNullException("data");
-            }
-
-            byte[] dataBuffer = System.Text.Encoding.ASCII.GetBytes(data);
-            byte[] hashBytes = hashAlgorithm.ComputeHash(dataBuffer);
-
-            return Convert.ToBase64String(hashBytes);
+            var mac = MacAlgorithmProvider.OpenAlgorithm(macAlgorithm);
+            
+            var keyMaterial = CryptographicBuffer.ConvertStringToBinary(key, Encoding.UTF8);
+            var cryptoKey = mac.CreateKey(keyMaterial);
+            var hash = CryptographicEngine.Sign(cryptoKey, Encoding.UTF8.GetBytes(data));
+            return Convert.ToBase64String(hash);
         }
 
         /// <summary>
         /// Internal function to cut out all non oauth query string parameters (all parameters not begining with "oauth_")
         /// </summary>
         /// <param name="parameters">The query string part of the Url</param>
-        /// <returns>A list of QueryParameter each containing the parameter name and value</returns>
+        /// <returns>A list of QueryParameter each containing the parameter name and Value</returns>
         private List<QueryParameter> GetQueryParameters(string parameters)
         {
             if (parameters.StartsWith("?"))
@@ -157,7 +150,7 @@ namespace OAuth
         /// This is a different Url Encode implementation since the default .NET one outputs the percent encoding in lower case.
         /// While this is not a problem with the percent encoding spec, it is used in upper case throughout OAuth
         /// </summary>
-        /// <param name="value">The value to Url encode</param>
+        /// <param name="value">The Value to Url encode</param>
         /// <returns>Returns a Url encoded string</returns>
         public string UrlEncode(string value)
         {
@@ -205,7 +198,7 @@ namespace OAuth
         /// Generate the signature base that is used to produce the signature
         /// </summary>
         /// <param name="url">The full url that needs to be signed including its non OAuth url parameters</param>
-        /// <param name="consumerKey">The consumer key</param>        
+        /// <param name="consumerKey">The consumer Key</param>        
         /// <param name="token">The token, if available. If not available pass null or an empty string</param>
         /// <param name="tokenSecret">The token secret, if available. If not available pass null or an empty string</param>
         /// <param name="httpMethod">The http method used. Must be a valid HTTP method verb (POST,GET,PUT, etc)</param>
@@ -272,26 +265,26 @@ namespace OAuth
         }
 
         /// <summary>
-        /// Generate the signature value based on the given signature base and hash algorithm
+        /// Generate the signature Value based on the given signature base and hash algorithm
         /// </summary>
         /// <param name="signatureBase">The signature based as produced by the GenerateSignatureBase method or by any other means</param>
-        /// <param name="hash">The hash algorithm used to perform the hashing. If the hashing algorithm requires initialization or a key it should be set prior to calling this method</param>
-        /// <returns>A base64 string of the hash value</returns>
-        public string GenerateSignatureUsingHash(string signatureBase, HashAlgorithm hash)
+        /// <param name="hash">The hash algorithm used to perform the hashing. If the hashing algorithm requires initialization or a Key it should be set prior to calling this method</param>
+        /// <returns>A base64 string of the hash Value</returns>
+        public string GenerateSignatureUsingHash(string signatureBase,string key, MacAlgorithm hash)
         {
-            return ComputeHash(hash, signatureBase);
+            return ComputeHash(hash,key, signatureBase);
         }
 
         /// <summary>
         /// Generates a signature using the HMAC-SHA1 algorithm
         /// </summary>        
         /// <param name="url">The full url that needs to be signed including its non OAuth url parameters</param>
-        /// <param name="consumerKey">The consumer key</param>
+        /// <param name="consumerKey">The consumer Key</param>
         /// <param name="consumerSecret">The consumer seceret</param>
         /// <param name="token">The token, if available. If not available pass null or an empty string</param>
         /// <param name="tokenSecret">The token secret, if available. If not available pass null or an empty string</param>
         /// <param name="httpMethod">The http method used. Must be a valid HTTP method verb (POST,GET,PUT, etc)</param>
-        /// <returns>A base64 string of the hash value</returns>
+        /// <returns>A base64 string of the hash Value</returns>
         public string GenerateSignature(Uri url, string consumerKey, string consumerSecret, string token, string tokenSecret, string httpMethod, string timeStamp, string nonce, out string normalizedUrl, out string normalizedRequestParameters)
         {
             return GenerateSignature(url, consumerKey, consumerSecret, token, tokenSecret, httpMethod, timeStamp, nonce, SignatureTypes.HMACSHA1, out normalizedUrl, out normalizedRequestParameters);
@@ -301,13 +294,13 @@ namespace OAuth
         /// Generates a signature using the specified signatureType 
         /// </summary>        
         /// <param name="url">The full url that needs to be signed including its non OAuth url parameters</param>
-        /// <param name="consumerKey">The consumer key</param>
+        /// <param name="consumerKey">The consumer Key</param>
         /// <param name="consumerSecret">The consumer seceret</param>
         /// <param name="token">The token, if available. If not available pass null or an empty string</param>
         /// <param name="tokenSecret">The token secret, if available. If not available pass null or an empty string</param>
         /// <param name="httpMethod">The http method used. Must be a valid HTTP method verb (POST,GET,PUT, etc)</param>
         /// <param name="signatureType">The type of signature to use</param>
-        /// <returns>A base64 string of the hash value</returns>
+        /// <returns>A base64 string of the hash Value</returns>
         public string GenerateSignature(Uri url, string consumerKey, string consumerSecret, string token, string tokenSecret, string httpMethod, string timeStamp, string nonce, SignatureTypes signatureType, out string normalizedUrl, out string normalizedRequestParameters)
         {
             normalizedUrl = null;
@@ -316,14 +309,12 @@ namespace OAuth
             switch (signatureType)
             {
                 case SignatureTypes.PLAINTEXT:
-                    return HttpUtility.UrlEncode(string.Format("{0}&{1}", consumerSecret, tokenSecret));
+                    return WebUtility.UrlEncode(string.Format("{0}&{1}", consumerSecret, tokenSecret));
                 case SignatureTypes.HMACSHA1:
                     string signatureBase = GenerateSignatureBase(url, consumerKey, token, tokenSecret, httpMethod, timeStamp, nonce, HMACSHA1SignatureType, out normalizedUrl, out normalizedRequestParameters);
 
-                    HMACSHA1 hmacsha1 = new HMACSHA1();
-                    hmacsha1.Key = Encoding.ASCII.GetBytes(string.Format("{0}&{1}", UrlEncode(consumerSecret), string.IsNullOrEmpty(tokenSecret) ? "" : UrlEncode(tokenSecret)));
-
-                    return GenerateSignatureUsingHash(signatureBase, hmacsha1);
+                    var key = $"{UrlEncode(consumerSecret)}&{(string.IsNullOrEmpty(tokenSecret) ? "" : UrlEncode(tokenSecret))}";
+                    return GenerateSignatureUsingHash(signatureBase,key,MacAlgorithm.HmacSha1);
                 case SignatureTypes.RSASHA1:
                     throw new NotImplementedException();
                 default:

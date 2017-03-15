@@ -1,31 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
+using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace GeocachingToolbox.GeocachingCom
 {
     public class WebBrowserSimulator
     {
-        private CookieCollection cookies = new CookieCollection();
+        private CookieContainer m_CookieContainer = new CookieContainer();
 
-        public string GetRequest(string url, IDictionary<string, string> getData = null)
+        public async Task<string> GetRequestAsString(string url, IDictionary<string, string> getData = null)
         {
-            return Request(url, WebRequestMethods.Http.Get, getData);
+            var data = await Request(url, HttpMethod.Get, getData);
+            return await data.ReadAsStringAsync();
         }
 
-        public string PostRequest(string url, IDictionary<string, string> postData)
+        public async Task<HttpContent> GetRequest(string url, IDictionary<string, string> getData = null)
         {
-            return Request(url, WebRequestMethods.Http.Post, postData);
+            return await Request(url, HttpMethod.Get, getData);
         }
 
-        private string Request(string url, string method, IDictionary<string, string> data = null)
+        public async Task<string> PostRequest(string url, IDictionary<string, string> postData)
         {
-            if (method == WebRequestMethods.Http.Get && data != null && data.Count > 0)
+            var data = await Request(url, HttpMethod.Post, postData);
+            return await data.ReadAsStringAsync();
+        }
+
+        private async Task<HttpContent> Request(string url, HttpMethod method, IDictionary<string, string> data = null)
+        {
+            if (method == HttpMethod.Get && data != null && data.Count > 0)
             {
                 url += "?";
 
@@ -36,52 +40,30 @@ namespace GeocachingToolbox.GeocachingCom
                 }
             }
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.UserAgent = "User-Agent=Mozilla/5.0 (Windows NT 6.1; WOW64; rv:37.0) "
-                + "Gecko/20100101 Firefox/37.0";
-            request.Accept = "Accept=text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
-            request.CookieContainer = new CookieContainer();
-            request.CookieContainer.Add(cookies);
-            request.Method = method;
-            request.KeepAlive = true;
-            request.Headers.Add("Accept-Charset: utf-8,iso-8859-1;q=0.8,utf-16;q=0.8,*;q=0.7");
-            request.Headers.Add("Accept-Language: en-US,*;q=0.9");
-            request.AllowWriteStreamBuffering = true;
-            request.ProtocolVersion = HttpVersion.Version11;
-            request.AllowAutoRedirect = true;
-            request.ContentType = "application/x-www-form-urlencoded";
-            // TODO: handle compressed responses
-            //request.Headers.Add("Accept-Encoding: gzip,deflate");
-
-            if (method == WebRequestMethods.Http.Post)
+            var httpHandler = new HttpClientHandler
             {
-                string postDataAsString = "";
+                AllowAutoRedirect = true,
+                CookieContainer = m_CookieContainer
+            };
+            if (url.Contains("login"))
+                httpHandler.AllowAutoRedirect = false;
 
-                foreach (var entry in data)
-                {
-                    // TODO remove this temporary workaround
-                    postDataAsString += HttpUtility.UrlEncode(entry.Key) + "="
-                        + HttpUtility.UrlEncode(entry.Value) + "&";
-                }
+            httpHandler.UseCookies = true;
+            var httpClient = new HttpClient(httpHandler);
 
-                byte[] postDataAsByteArray = Encoding.ASCII.GetBytes(postDataAsString);
-                request.ContentLength = postDataAsByteArray.Length;
-                Stream requestStream = request.GetRequestStream();
-                requestStream.Write(postDataAsByteArray, 0, postDataAsByteArray.Length);
-                requestStream.Close();
-            }
+            httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:37.0) Gecko/20100101 Firefox/46.0");
+            httpClient.DefaultRequestHeaders.Add("Accept-Charset", "utf-8,iso-8859-1;q=0.8,utf-16;q=0.8,*;q=0.7");
+            httpClient.DefaultRequestHeaders.Add("Accept-Language", "en-US,*;q=0.9");
 
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            cookies = response.Cookies;
+            var httpResponse = method == HttpMethod.Post
+                ? await httpClient.PostAsync(url, new FormUrlEncodedContent(data))
+                : await httpClient.GetAsync(url);
 
-            string responseString;
+            //httpResponse.EnsureSuccessStatusCode();
+            m_CookieContainer = httpHandler.CookieContainer;
+            return httpResponse.Content;
 
-            using (StreamReader sr = new StreamReader(response.GetResponseStream()))
-            {
-                responseString = sr.ReadToEnd();
-            }
-
-            return responseString;
+            // return await httpResponse.Content.ReadAsStringAsync();
         }
     }
 }

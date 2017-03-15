@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using GeocachingToolbox.GeocachingCom;
-using KellermanSoftware.CompareNetObjects;
 using Machine.Specifications;
 using Rhino.Mocks;
 using System;
@@ -12,8 +11,8 @@ namespace GeocachingToolbox.UnitTests.GeocachingCom
     {
         protected static GCClient _gcClient;
         protected static IGCConnector _stubConnector;
-        protected static IEnumerable<GCLog> _result;
-        protected static IEnumerable<GCLog> _expectedResult;
+        protected static IEnumerable<Log> _result;
+        protected static IEnumerable<Log> _expectedResult;
 
         Establish context = () =>
         {
@@ -22,19 +21,18 @@ namespace GeocachingToolbox.UnitTests.GeocachingCom
             _stubConnector.Expect(x => x.GetPage("my/logs.aspx?s=1&lt=2"))
                 .ReturnContentOf(@"GeocachingCom\WebpageContents\NonemptyFoundGeocaches.html").Repeat.Once();
 
-            _expectedResult = new List<GCLog>()
+            _expectedResult = new List<Log>()
             {
-                new GCLog {
+                new Log {
                     Date = new DateTime(2015, 3, 19),
                     LogType = GeocacheLogType.Found,
-                    IsFavorite = true,
                     Thing = new GCGeocache {
                         Name = "Ron's Park",
                         Type = GeocacheType.Traditional,
                         Status = GeocacheStatus.Published,
                         DetailsUrl = "seek/cache_details.aspx?guid=906186d7-b4bd-4c1a-87c2-af8485f10e16" }
                 },
-                new GCLog {
+                new Log {
                     Date = new DateTime(2015, 3, 13),
                     LogType = GeocacheLogType.Found,
                     Thing = new GCGeocache {
@@ -43,7 +41,7 @@ namespace GeocachingToolbox.UnitTests.GeocachingCom
                         Status = GeocacheStatus.Published,
                         DetailsUrl = "seek/cache_details.aspx?guid=31e86d80-4b6f-4c9d-a4a1-ec6f578506ed" }
                 },
-                new GCLog {
+                new Log {
                     Date = new DateTime(2015, 1, 13),
                     LogType = GeocacheLogType.Found,
                     Thing = new GCGeocache {
@@ -52,7 +50,7 @@ namespace GeocachingToolbox.UnitTests.GeocachingCom
                         Status = GeocacheStatus.Published,
                         DetailsUrl = "seek/cache_details.aspx?guid=f96a7104-3beb-4495-9a20-15b1b1ef796a" }
                 },
-                new GCLog {
+                new Log {
                     Date = new DateTime(2014, 9, 7),
                     LogType = GeocacheLogType.Found,
                     Thing = new GCGeocache {
@@ -61,7 +59,7 @@ namespace GeocachingToolbox.UnitTests.GeocachingCom
                         Status = GeocacheStatus.Published,
                         DetailsUrl = "seek/cache_details.aspx?guid=7eaa4ee0-1181-47c6-972e-84fbd972e3bf" }
                 },
-                new GCLog {
+                new Log {
                     Date = new DateTime(2014, 8, 28),
                     LogType = GeocacheLogType.Found,
                     Thing = new GCGeocache {
@@ -70,7 +68,7 @@ namespace GeocachingToolbox.UnitTests.GeocachingCom
                         Status = GeocacheStatus.Published,
                         DetailsUrl = "seek/cache_details.aspx?guid=540a9a3d-738b-4613-b14e-2e9818729443" }
                 },
-                new GCLog {
+                new Log {
                     Date = new DateTime(2014, 8, 28),
                     LogType = GeocacheLogType.Found,
                     Thing = new GCGeocache {
@@ -79,7 +77,7 @@ namespace GeocachingToolbox.UnitTests.GeocachingCom
                         Status = GeocacheStatus.Published,
                         DetailsUrl = "seek/cache_details.aspx?guid=ec298ce5-22d8-47c9-aa47-b4cc4aa375fd" }
                 },
-                new GCLog {
+                new Log {
                     Date = new DateTime(2014, 9, 13),
                     LogType = GeocacheLogType.Found,
                     Thing = new GCGeocache {
@@ -88,7 +86,7 @@ namespace GeocachingToolbox.UnitTests.GeocachingCom
                         Status = GeocacheStatus.Archived,
                         DetailsUrl = "seek/cache_details.aspx?guid=0c3a2546-369f-4195-9dbf-aeb3bf1f4926" }
                 },
-                new GCLog {
+                new Log {
                     Date = new DateTime(2014, 9, 12),
                     LogType = GeocacheLogType.Found,
                     Thing = new GCGeocache {
@@ -100,8 +98,11 @@ namespace GeocachingToolbox.UnitTests.GeocachingCom
             };
         };
 
-        Because of = () =>
-            _result = _gcClient.GetFoundGeocaches<GCLog>();
+        private Because of = () =>
+        {
+            _gcClient._dateFormat = "dd/MM/yyyy";
+            _result = _gcClient.GetFoundGeocachesAsync<Log>().Await().AsTask.Result;
+        };
 
         It should_return_a_list_of_8_logs_of_caches_of_various_type_and_status = () =>
             _result.ShouldEqualRecursively(_expectedResult);

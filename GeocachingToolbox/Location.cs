@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace GeocachingToolbox
 {
     public class Location
     {
-        public decimal Latitude { get; private set; }
+       public decimal Latitude { get; private set; }
         public decimal Longitude { get; private set; }
 
         public Location(decimal latitude, decimal longitude)
@@ -16,11 +13,17 @@ namespace GeocachingToolbox
             Longitude = longitude;
         }
 
+        public Location(double latitude, double longitude)
+        {
+            Latitude = (decimal)latitude;
+            Longitude = (decimal)longitude;
+        }
+
         public Location(int latitude, decimal latitudeMinutes,
             int longitude, decimal longitudeMinutes)
         {
-            Latitude = (decimal)latitude + latitudeMinutes/60;
-            Longitude = (decimal)longitude + longitudeMinutes/60;
+            Latitude = (decimal)latitude + latitudeMinutes / 60;
+            Longitude = (decimal)longitude + longitudeMinutes / 60;
         }
 
         public double DistanceInMetersTo(Location other)

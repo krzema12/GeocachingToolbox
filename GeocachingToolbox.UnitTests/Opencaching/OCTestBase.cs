@@ -1,7 +1,6 @@
 ﻿using GeocachingToolbox.Opencaching;
 using Machine.Specifications;
 using Rhino.Mocks;
-using System.Collections.Generic;
 
 namespace GeocachingToolbox.UnitTests.Opencaching
 {

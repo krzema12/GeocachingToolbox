@@ -3,9 +3,6 @@ using Machine.Specifications;
 using Rhino.Mocks;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GeocachingToolbox.UnitTests.GeocachingCom
 {
@@ -49,7 +46,7 @@ namespace GeocachingToolbox.UnitTests.GeocachingCom
         };
 
         Because of = () =>
-            _gcClient.PostGeocacheLog(_cacheToBeLogged, _logType, _date, _description);
+            _gcClient.PostGeocacheLogAsync(_cacheToBeLogged, _logType, _date, _description).Await();
 
         It should_call_connectors_GetPage_and_PostToPage_methods = () =>
             _stubConnector.VerifyAllExpectations();

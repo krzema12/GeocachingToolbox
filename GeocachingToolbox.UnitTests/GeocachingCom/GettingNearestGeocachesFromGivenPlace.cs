@@ -3,9 +3,6 @@ using Machine.Specifications;
 using Rhino.Mocks;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GeocachingToolbox.UnitTests.GeocachingCom
 {
@@ -89,8 +86,14 @@ namespace GeocachingToolbox.UnitTests.GeocachingCom
             };
         };
 
-        Because of = () =>
-            _result = _gcClient.GetNearestGeocaches<GCGeocache>(new Location(54.371676M, 18.612415M));
+        private Because of = () =>
+        {
+            _gcClient._dateFormat = "dd/MM/yyyy";
+            _result =
+                _gcClient.GetNearestGeocachesAsync<GCGeocache>(new Location(54.371676M, 18.612415M))
+                    .Await()
+                    .AsTask.Result;
+        };
 
         It should_return_a_list_of_5_caches = () =>
             _result.ShouldEqualRecursively(_expectedResult);

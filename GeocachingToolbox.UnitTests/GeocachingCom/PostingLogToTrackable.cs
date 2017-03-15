@@ -3,9 +3,6 @@ using Machine.Specifications;
 using Rhino.Mocks;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GeocachingToolbox.UnitTests.GeocachingCom
 {
@@ -42,8 +39,8 @@ namespace GeocachingToolbox.UnitTests.GeocachingCom
             _description = "Testowa treść";
         };
 
-        Because of = () =>
-            _gcClient.PostTrackableLog(_trackableToBeLogged, _logType, _date, _description);
+        private Because of = () =>
+            _gcClient.PostTrackableLogAsync(_trackableToBeLogged, _logType, _date, _description).Await();
 
         It should_call_connectors_GetPage_and_PostToPage_methods = () =>
             _stubConnector.VerifyAllExpectations();
@@ -78,7 +75,7 @@ namespace GeocachingToolbox.UnitTests.GeocachingCom
         };
 
         Because of = () =>
-            _exception = Catch.Exception(() => _gcClient.PostTrackableLog(_trackableToBeLogged, _logType, _date, _description));
+            _exception = Catch.Exception(() => _gcClient.PostTrackableLogAsync(_trackableToBeLogged, _logType, _date, _description).Await());
 
         It should_call_connectors_GetPage_method = () =>
             _stubConnector.VerifyAllExpectations();

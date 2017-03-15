@@ -11,15 +11,21 @@ namespace Examples
     class GeocachingComExamples
     {
         private GCClient client;
-        private const string Login = "YourLoginHere";
-        private const string Password = "YourPasswordHere";
+        private readonly string Login;
+        private readonly string Password;
+
+        public GeocachingComExamples(string login, string password)
+        {
+            Login = login;
+            Password = password;
+        }
 
         public void Run()
         {
             LogIn();
             DisplayUserInfo();
-            ListNewestFoundGeocaches();
-            GetDetailsForNewestFoundGeocache();
+            ListNewestFoundGeocaches().GetAwaiter().GetResult();
+            GetDetailsForNewestFoundGeocache().GetAwaiter().GetResult();
 
             Console.Write("\n\n");
             Console.WriteLine("Press enter to close this window...");
@@ -32,7 +38,7 @@ namespace Examples
 
             try
             {
-                client.Login(Login, Password);
+                client.Login(Login, Password).GetAwaiter().GetResult();
             }
             catch (IncorrectCredentialsException e)
             {
@@ -46,11 +52,11 @@ namespace Examples
             Console.WriteLine("Hello {0}! So far you've found {1} geocaches.", client.User.Name, client.User.FoundGeocachesCount);
         }
 
-        private void ListNewestFoundGeocaches()
+        private async Task ListNewestFoundGeocaches()
         {
             Console.WriteLine("Here are some geocaches you've recently found:");
-
-            var foundLogsNewestTen = client.GetFoundGeocaches<GCLog>().Take(10);
+            var foundLogs = await client.GetFoundGeocachesAsync<Log>();
+            var foundLogsNewestTen = foundLogs.Take(10);
 
             foreach (var log in foundLogsNewestTen)
             {
@@ -59,9 +65,10 @@ namespace Examples
             }
         }
 
-        private void GetDetailsForNewestFoundGeocache()
+        private async Task GetDetailsForNewestFoundGeocache()
         {
-            var newestFoundLog = client.GetFoundGeocaches<GCLog>().FirstOrDefault();
+            var foundLogs = await client.GetFoundGeocachesAsync<Log>();
+            var newestFoundLog = foundLogs.FirstOrDefault();
 
             if (newestFoundLog == null)
             {
@@ -69,7 +76,7 @@ namespace Examples
             }
 
             var newestFoundCache = newestFoundLog.Thing as GCGeocache;
-            client.GetGeocacheDetails<GCGeocache>(newestFoundCache);
+            client.GetGeocacheDetailsAsync<GCGeocache>(newestFoundCache).GetAwaiter().GetResult();
 
             Console.WriteLine("Name:               {0}", newestFoundCache.Name);
             Console.WriteLine("Type:               {0}", newestFoundCache.Type);
