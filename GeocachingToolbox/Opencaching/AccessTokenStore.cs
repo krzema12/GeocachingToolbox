@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-
-namespace GeocachingToolbox.Opencaching
+﻿namespace GeocachingToolbox.Opencaching
 {
     public class AccessTokenStore : IAccessTokenStore
     {

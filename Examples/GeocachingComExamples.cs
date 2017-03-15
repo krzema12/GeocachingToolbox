@@ -55,7 +55,7 @@ namespace Examples
         private async Task ListNewestFoundGeocaches()
         {
             Console.WriteLine("Here are some geocaches you've recently found:");
-            var foundLogs = await client.GetFoundGeocachesAsync<GCLog>();
+            var foundLogs = await client.GetFoundGeocachesAsync<Log>();
             var foundLogsNewestTen = foundLogs.Take(10);
 
             foreach (var log in foundLogsNewestTen)
@@ -67,7 +67,7 @@ namespace Examples
 
         private async Task GetDetailsForNewestFoundGeocache()
         {
-            var foundLogs = await client.GetFoundGeocachesAsync<GCLog>();
+            var foundLogs = await client.GetFoundGeocachesAsync<Log>();
             var newestFoundLog = foundLogs.FirstOrDefault();
 
             if (newestFoundLog == null)

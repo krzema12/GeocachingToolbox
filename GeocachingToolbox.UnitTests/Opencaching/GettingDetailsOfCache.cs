@@ -29,7 +29,7 @@ namespace GeocachingToolbox.UnitTests.Opencaching
             {
                 Code = "OP886F",
                 Name = "PARK MILLENIUM GDAŃSKA",
-                Waypoint = new Location(54.39635M, 18.6134M),
+                //Waypoint = new Location(54.39635M, 18.6134M),
                 Type = GeocacheType.Traditional,
                 Status = GeocacheStatus.Published,
                 Size = GeocacheSize.Micro,
@@ -43,11 +43,12 @@ namespace GeocachingToolbox.UnitTests.Opencaching
                 Hint = "Poniżej gruntu",
                 Owner = new OCUser("KTA AZYMUT", -1, "07474FE9-277F-A6F3-2696-B01B9B87862B")
             };
+            _expectedResult.SetWaypoint(new Location(54.39635M, 18.6134M));
         };
 
         Because of = () =>
         {
-            _ocClient.GetGeocacheDetailsAsync(_subject);
+            _ocClient.GetGeocacheDetailsAsync(_subject).Await();
         };
 
         It should_return_an_object_with_geocache_details = () =>

@@ -16,13 +16,13 @@ namespace Examples
             var config = LoadConfiguration();
 
             // Geocaching.com 
-            //var examples = new GeocachingComExamples(config.GCLogin, config.GCPassword);
-            //examples.Run();
+            var examples = new GeocachingComExamples(config.GCLogin, config.GCPassword);
+            examples.Run();
 
             // Opencaching
-            ApiAccessKeysImpl apiKeys = new ApiAccessKeysImpl(config.OCConsumerKey, config.OCConsumerSecret);
-            AccessTokenStore accessTokenStore = new AccessTokenStore(config.OCToken, config.OCTokenSecret);
-            var examples = new OpencachingExamples(apiKeys, accessTokenStore);
+            //ApiAccessKeysImpl apiKeys = new ApiAccessKeysImpl(config.OCConsumerKey, config.OCConsumerSecret);
+           // AccessTokenStore accessTokenStore = new AccessTokenStore(config.OCToken, config.OCTokenSecret);
+            //var examples = new OpencachingExamples(apiKeys, accessTokenStore);
             examples.Run();
         }
 

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace GeocachingToolbox.GeocachingCom
@@ -10,6 +8,7 @@ namespace GeocachingToolbox.GeocachingCom
     {
         Task<string> Login(string login, string password);
         Task<string> GetPage(string url);
+        Task<HttpContent> GetContent(string url, IDictionary<string, string> getData);
         Task<string> PostToPage(string url, IDictionary<string, string> parameters);
     }
 }

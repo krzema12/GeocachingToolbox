@@ -1,0 +1,467 @@
+﻿
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head id="Head1">
+    <title>
+        Geocaching &gt; Geocaching Maps
+    </title>
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE10" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+    <link href="//fonts.googleapis.com/css?family=Noto+Sans:400,700&amp;subset=latin,latin-ext" rel="stylesheet" type="text/css" />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/map/apple-touch-icon.png" />
+    <link href="/js/leaflet/0.5.1/leaflet.css" rel="stylesheet" type="text/css" />
+    <link href="/js/jquery_plugins/qtip/jquery.qtip.css" rel="stylesheet" type="text/css" />
+    <link href="css/screen.css" rel="Stylesheet" type="text/css" media="screen" />
+    <link rel="Stylesheet" href="css/print.css" type="text/css" media="print" />
+    <link href="/css/fancybox/jquery.fancybox.css" rel="stylesheet" type="text/css" />
+    <link href="css/controls.css" rel="stylesheet" type="text/css" />
+    <!--[if lte IE 8]>
+        <link href="css/screen-ie.css" rel="stylesheet" media="screen" /><link href="/js/leaflet/0.5.1/leaflet.ie.css" rel="stylesheet" type="text/css" /><link href="css/print-ie.css" rel="stylesheet" media="print" />
+        <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+            m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+
+        ga('create', 'UA-2020240-1', 'auto', {userId: 7845938});
+
+        ga('require', 'linkid');
+
+        ga('set', 'page', '/map/default.aspx');
+        ga('set', 'title', 'Geocaching Map');
+
+        ga('send', 'pageview');
+    </script>
+
+
+    <script type="text/javascript">
+        if (window.location.hash == '#_=_')
+            window.location.hash = '';
+    </script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="js/jquery-1.9.1.min.js">\x3C/script>')</script>
+
+    <script type="text/javascript" src="js/jquery.migrate.js"></script>
+    <script type="text/javascript" src="js/modernizr.custom.78581.js"></script>
+
+    <script type="text/javascript">
+        /* GLOBAL */
+        var LocalizedText = {},
+            pnlOpen = true,
+            sc = null,
+            api = null;
+    </script>
+</head>
+<body>
+    <form name="form1" method="post" action="./default.aspx" id="form1">
+        <div>
+            <input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="GcMhnHXk/246WirHWoN2qQ2b68CH4aZFOTGfv/V9HKlvrA3OCJdjnrSnKu/UjrKpoyOwCqFrsYwMf8rI8CIOjQCik78/ZL8++LDcrFYB3cc82hkHNbXPyPUb8iW7MuNctsSCwuQ68tn5tknnmJ/Xc2VkRXIh1zXCZxbRkGY9Ia1DL07SHPcjUsuux9hz6no5Pobh2d0QH5b6J9M6EQAA5PWGLSscpw7LcyvtP2TPD40epRMJKScI8M6HT/fX1BLFCof516/IgZgtOGU+UMRyEscnKywVxcXPOAtA9xVi2e+fb1iTNrs6CEW+kS18931RQj513CeBkBfM1YABu/rWxDfd/tA3rHIzQgUFykoGsx5LtfOApd6Xr9d/TizIH9yRVpB0rl8mkH4NlEXn/eL5FMrRRR5UgeC8r9g/+ChBlULbeWnC5IgJ5s1hnnD1VcY7AC2mNbQCQXrZicvHVKRyNf3X3dg2gcEbcL1IYO1da2h3U4pSEkcrQdWobcoWsbxJ6VLFBEoTJjgwpmgZE/eGVCJlfOA+TRNcFDnAIA4lsDXPDlypa0Bxsf4ywrAEBUcunyFEVfNjOytCXAWhl/15knYj6qrVbZtyNS+0dir6/6pBbq1ZpwoPc44W0tLGOOkJXpdrpxNSIsoadp0wzKSAavI5+mUFukn9bra7VS7GcQftD4UNxnUIrSK6Ai1ijRW6hQRhuNjQwQM04dH0qixDYpAO8qxuyOyXiP/6uWa21F+o0abVvmeU9PLXj02ALUEDtVNLztSPW+kYARn3y+gfoKc+oo/Jt1poNtP5rzOQdvdmrKrFMsNEfA41ShGaqUxKbSN4IA0se/barKtd4o7ulyIVVBhwAcs0joxfAXrytZeGRrt7zVWXWIppfXd5vcnV7gsoggmhiSjw2Auw9flZDRvY3JNTdih380CaOtbqhMA6X6uH72r5v3VSdmEruD0XNhyuyzMRwTGzMTDF0fqdtXmrOimY+a7MtdJi/+SdScm29jVedghpIn+0wozBft0i4rXIZwWCHBwDWLnh55ZIZ+7PTPkWFPg4osp735/smbv1lxwCVn0p+Cq/3ADq00cC6nUa5fR5f0fhEqtBEne/B//zTBStJAieDpzGxrza1E34n+BKsuS4BYKRq6bPGUSZWNVsc0aN3HXRbjfAdHB7wqNs+asjE0cWgsmN+cRnWhuBhYg22q6pqQXSblQ6/D7FTtWLwZEKUB6bLWe8qNTRvAB2Cb3dRedlMauR+cBcLx08tCrDqBMOSVle6QYqB2kjPIxnKyj85+5mwgbkUvTieFJg7Zc5Q5A5AXz9osQXYnCov056xsBpD1PGSLUtFTtXmK5ixh1+rygEA6XoIUnaD14k1rgoylbawWATQawqhzH3NQVXY10vWP/ixgu6T+0xgGsUl+psDGGWdEYtUIXtfLhd73Q1aTedkw8clog50E2MsOHqvS2mT/KEEpgBFs3MiXFUOGLjElhLBH/ZuM663vHxC1Lm2Vtbd8BrO1oJWJyGHxeU" />
+        </div>
+
+
+        <script src="/ScriptResource.axd?d=yIXVm72E1oz7Enll1DtN4zJWooeQjDQOsrfa_4jL6Wp052ISVq3cBsEkSo8U-fXd8HtYJRkW4swhZcy3Z98tnbzvmGLb9fqVgZZ_66Sl4NW5rJie0fmuUKbql1qJzOBvlqAwmf1P-K1cAl9VMQnlXK2AuIvJIwc6oi4C6UsG5xVXVzLMwDvOVMZOt2_6eQ53G1NxtA5X6V7V1jWT3lJkdkorkR5Cx0Qwj858dTxMu16WVunmu0HwXyc03HV-Ze8crBCWcfkEhyysFynaE8sujRbFQTjduk-zPKr0wFWwRvjBqE_h8uMYyT4k60_k9u9xS6QrUj8AbcjbftUENn_oKiUiL78GbqnsWjGuNuQYExLG_a5Tf1D_Tm9vfLpYnIFwfOuFXZkCcnf1_LdZyIoPMqu1Pilqb6GH6YyTZ9PHGRSweoKAbZ4FmKC0YQ61_RaF54kWpiLNMli-Qj8bq6t4g5_YQkEgr5penReZs37J7fQ29A8_E594tSzccrNZJuqZE76xt8S1jmUfGeS0hJUe5kthJ4FdCS2NvoxXJsMbmOJf2MZa4cfykHVBCszxVxxoFqspgT7fuDyt6CGqQKmPk6kpYgw1" type="text/javascript"></script>
+        <div>
+
+            <input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="9477F8F5" />
+        </div>
+
+        <header class="row">
+            <h1 class="MapsLogo">
+                <a href="../default.aspx" title="Geocaching">
+                    <img src="/images/tlnmasters/geocaching-logo.png" alt="Geocaching" height="28" width="195" />
+                </a>
+            </h1>
+            <div class="ProfileWidget">
+
+                <div id="uxLoginStatus_divSignedIn">
+                    <ul class="logged-in-user">
+                        <li class="li-user">
+                            <a class="SignedInProfileLink" href="/my/default.aspx" title="View Your Profile">
+                                <span class="avatar">
+                                    <img id="uxLoginStatus_hlHeaderAvatar" src="https://www.geocaching.com/images/default_avatar.png" style="border-width:0px;" />
+                                </span>
+                                <span class="li-user-info">
+                                    <span>lploumen</span>
+                                    <span class="cache-count">151 Finds</span>
+                                </span>
+                            </a>
+                            <button type="button" class="li-user-toggle">
+                                <svg width="12px" height="7px" viewBox="0 0 12 7" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                        <g class="arrow" transform="translate(-1277.000000, -25.000000)" stroke="#FFFFFF" fill="#FFFFFF">
+                                            <path d="M1280.43401,23.3387013 C1280.20315,23.5702719 1280.20315,23.945803 1280.43401,24.1775793 L1284.82138,28.5825631 L1280.43401,32.9873411 C1280.20315,33.2191175 1280.20315,33.5944429 1280.43401,33.8262192 C1280.54934,33.9420045 1280.70072,34 1280.8519,34 C1281.00307,34 1281.15425,33.9422102 1281.26978,33.8262192 L1286.07462,29.0018993 C1286.30548,28.7701229 1286.30548,28.3947975 1286.07462,28.1630212 L1281.26958,23.3387013 C1281.03872,23.106925 1280.66487,23.106925 1280.43401,23.3387013 Z" id="Dropdown-arrow" sketch:type="MSShapeGroup" transform="translate(1283.254319, 28.582435) scale(1, -1) rotate(-90.000000) translate(-1283.254319, -28.582435) "></path>
+                                        </g>
+                                    </g>
+                                </svg>
+                            </button>
+                            <ul>
+                                <li class="li-settings">
+                                    <a title="Edit Account Settings" class="icon-settings" href="/account/settings">Settings</a>
+                                </li>
+                                <li class="messagecenterheaderwidget li-messages">
+                                    <a class="message-center-icon" href="/account/messagecenter">
+                                        <span class="link-text">Messages</span>
+                                    </a>
+                                </li>
+                                <li class="li-signout">
+                                    <a id="uxLoginStatus_hlSignOut" accesskey="s" class="sign-out" href="https://www.geocaching.com/login/default.aspx?RESET=Y&amp;redir=https%3a%2f%2fwww.geocaching.com%2fmap%2fdefault.aspx%3f">Sign Out</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="messagecenterheaderwidget li-messages">
+                            <span></span>
+                            <a class="message-center-icon" href="/account/messagecenter">
+                                <span class="link-text">Messages</span>
+                            </a>
+                        </li>
+
+                        <li class="li-upgrade">
+
+
+                            <span></span>
+                            <a id="hlUpgrade" accesskey="r" title="Upgrade to Premium" class="LinkButton btn-external" href="https://payments.geocaching.com/?upgrade=true">Upgrade</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+        <div id="Content" class="map-wrapper">
+
+            <div class="Sidebar col Open">
+                <div id="searchtabs" class="row">
+                    <ul>
+                        <li id="searchlink_button">
+                            <a href="#search" title="Search" id="searchlink" class="Active">
+                                Search
+                            </a>
+                        </li>
+                        <li id="pqlink_button">
+                            <a href="#pq" title="Pocket Queries" id="pqlink">
+                                Pocket Queries
+                            </a>
+                        </li>
+
+
+                    </ul>
+                </div>
+                <div id="scrollbar" class="row scroll-y">
+                    <div id="scroller">
+
+                        <div id="search">
+
+                            <h3>
+                                Search for Geocaches
+                            </h3>
+                            <div class="SearchBox">
+
+
+                                <input type="text" id="SearchBox_Text" placeholder="Search by Address or Coordinates." />
+                                <button id="SearchBox_Button" title="Search">
+                                    Search
+                                </button>
+
+
+                            </div>
+                            <div class="Filters">
+                                <h3>
+                                    Filter Caches
+                                </h3>
+                                <ul id="m_myCaches">
+                                    <li class="ct_mf ct_displayed pt_toggle" title="My Finds">
+                                        My Finds
+                                    </li>
+                                    <li class="ct_mo ct_displayed pt_toggle" title="My Hides">
+                                        My Hides
+                                    </li>
+                                </ul>
+                                <p>
+                                    Filterable Cache Types *
+                                </p>
+                                <ul id="m_cacheTypes">
+                                    <li id="LegendGreen" class="ct_groupToggle cat2 cacheCat">
+                                        <a href="#" class="a_cat_displayed"></a>
+                                        <ul>
+                                            <li id="Legend2" class="ct_toggle ct2 ct_displayed" title="Traditional" data-typeid="2"></li>
+                                            <li id="Legend9" class="ct_toggle ct9 ct_displayed" title="A.P.E." data-typeid="9"></li>
+                                            <li id="Legend5" class="ct_toggle ct5 ct_displayed" title="Letterbox" data-typeid="5"></li>
+                                        </ul>
+                                    </li>
+                                    <li id="LegendYellow" class="ct_groupToggle cat3 cacheCat">
+                                        <a href="#" class="a_cat_displayed"></a>
+                                        <ul>
+                                            <li id="Legend3" class="ct_toggle ct3 ct_displayed" title="Multi-Cache" data-typeid="3"></li>
+                                        </ul>
+                                    </li>
+                                    <li id="LegendRed" class="ct_groupToggle cat6 cacheCat">
+                                        <a href="#" class="a_cat_displayed"></a>
+                                        <ul>
+                                            <li id="Legend6" class="ct_toggle ct6 ct_displayed" title="Event" data-typeid="6"></li>
+                                            <li id="Legend453" class="ct_toggle ct453 ct_displayed" title="Mega-Event" data-typeid="453"></li>
+                                            <li id="Legend7005" class="ct_toggle ct7005 ct_displayed" title="Giga-Event" data-typeid="7005"></li>
+                                            <li id="Legend13" class="ct_toggle ct13 ct_displayed" title="Cache In Trash Out" data-typeid="13"></li>
+                                            <li id="Legend1304" class="ct_toggle ct1304 ct_displayed" title="GPS Adventures" data-typeid="1304"></li>
+                                        </ul>
+                                    </li>
+                                    <li id="chkLegendWhite" class="ct_groupToggle cat4 cacheCat">
+                                        <a href="#" class="a_cat_displayed"></a>
+                                        <ul>
+                                            <li id="Legend4" class="ct_toggle ct4 ct_displayed" title="Virtual" data-typeid="4"></li>
+                                            <li id="Legend11" class="ct_toggle ct11 ct_displayed" title="Webcam" data-typeid="11"></li>
+                                            <li id="Legend137" class="ct_toggle ct137 ct_displayed" title="EarthCache" data-typeid="137"></li>
+                                        </ul>
+                                    </li>
+                                    <li id="chkLegendBlue" class="ct_groupToggle cat8 cacheCat">
+                                        <a href="#" class="a_cat_displayed"></a>
+                                        <ul>
+                                            <li id="Legend8" class="ct_toggle ct8 ct_displayed" title="Mystery" data-typeid="8"></li>
+                                            <li id="Legend1858" class="ct_toggle ct1858 ct_displayed" title="Wherigo" data-typeid="1858"></li>
+                                        </ul>
+                                    </li>
+                                    <li id="LegendPMONotDisplayed">
+                                        * Includes Premium Member Caches:
+                                        <ul>
+                                            <li id="Legend2pmo" class="ct2_pmo ct_displayed no-cursor" title="Traditional" data-typeid="2"></li>
+                                            <li id="Legend3pmo" class="ct3_pmo ct_displayed no-cursor" title="Multi-Cache" data-typeid="3"></li>
+                                            <li id="Legend8pmo" class="ct8_pmo ct_displayed no-cursor" title="Mystery" data-typeid="8"></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                                <p>
+                                    <a href="#" class="lnk" id="lnk_savepq">
+                                        <img src="../images/icons/16/pocket_query.png" alt="" />
+                                        <span>
+                                            Save As Pocket Query
+                                        </span>
+                                    </a>
+                                </p>
+                                <br>
+                            </div>
+                        </div>
+                        <div id="pq" style="display: none">
+                            <div id="PQList" class="PQList">
+                                <h3>
+                                    Your Pocket Queries
+                                </h3>
+
+                                <ul>
+
+                                    <li><a href="#" class="lnk" data-pq-guid="PQbV-EWetEyuB5Ndf4HAYQ" data-pq-hash="a39832484c21a801692d348ca49b0124" data-pq-last-run-count="-1" title="Unknown Result Count"><img src="/images/icons/16/pocket_query.png" /> <span>Coxyde</span> <small>(500)</small></a></li>
+
+                                    <li><a href="#" class="lnk" data-pq-guid="mFObPkI5wkSiv8AXVF1fmw" data-pq-hash="a8b8a7009ec7bd0b7f864adcb3e304e2" data-pq-last-run-count="26" title="This PQ last returned 26 results"><img src="/images/icons/16/pocket_query.png" /> <span>Pour enfant</span> <small>(500)</small></a></li>
+
+                                </ul>
+
+                                Filters are a Geocaching Premium feature. <a href="https://payments.geocaching.com/?upgrade=true" data-ajax="false">Upgrade Now</a>
+                            </div>
+                            <div id="PQDetails" class="PQDetails" style="display: none">
+                                <a href="#" class="lnkBack">
+                                    &lt; Back
+                                </a>
+                                <h4>
+                                    Caches in [PQ Name]
+                                </h4>
+                                <ul></ul>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+                <footer class="row">
+
+                    <p>
+                        <a href="#" id="lnkMapPreferences" class="button">
+                            Set Map Preferences
+                        </a>
+                    </p>
+
+                    <p class="LinkField">
+                        <span class="button">Link:</span>
+                        <input id="map_linkto" type="text" placeholder="http://www.coord.info/map?" />
+                    </p>
+                    <p>
+                        &copy; 2016 <a href="http://www.groundspeak.com/" title="Groundspeak, Inc.">Groundspeak, Inc</a>. All Rights Reserved.
+                    </p>
+                </footer>
+                <a class="ToggleSidebar" href="#" title="Toggle Side Panel"></a>
+            </div>
+
+
+            <div class="Map" id="map_canvas" style="width: 100%; height: 100%;">
+            </div>
+
+        </div>
+
+
+
+        <script type="text/javascript">
+//<![CDATA[
+function addTopo() {
+                Groundspeak.Map.MapLayers.push(
+                {
+                    tileUrl: 'http://tileserver.mytopo.com/SecureTile/TileHandler.ashx?mapType=Topo&partnerID=49&hash=14009a553152e47534997c994d978fc0&x={x}&y={y}&z={z}',
+                    name: 'mytp',
+                    alt: 'My Topo',
+                    attribution: '<a href="http://www.mytopo.com/index.cfm" target="_blank">Topo maps provided by MyTopo.com</a>',
+                    tileSize: 256,
+                    minZoom: 9,
+                    maxZoom: 16
+                });
+            };ga('send', 'event', 'Geocaching', 'Map', 'MemberType', 'NormalUser');
+MapSettings.User.Session = new Groundspeak.UserSession('m3Dp', {userOptions:'XPTf', sessionToken:'nuv6nlTiwHsXAjwPUYltUYCjeVqnQy9bVdGx0OKxyvoh_FjJDAR9BOuJ8npePR_wSEHaAYnZjHFA_IwNU43-Cvtp6yzYz4NxvZchz0fo5pdrQceWIUdWzAGHwqhjeC6E0', subscriberType: 1, enablePersonalization: true });
+MapSettings.User.Home = { "lat":50.64564, "lng":5.89316 };
+ga('send', 'event', 'Geocaching', 'Map', 'Load-Leaflet');LocalizedText.UpsellText = "Filters are a Geocaching Premium feature. \u003ca href=\"https://payments.geocaching.com/?upgrade=true\" data-ajax=\"false\"\u003eUpgrade Now\u003c/a\u003e";MapSettings.MapBaseUrl = '//tiles0{s}.geocaching.com/';
+//]]>
+        </script>
+    </form>
+    <script type="text/javascript" src="/account/scripts/jquery.modal-events.js"></script>
+    <script src="/account/scripts/custom/message-center-header-widget.js"></script>
+    <script type="text/javascript">
+        $("#lnkMapPreferences").on("click", function (e) {
+            e.preventDefault();
+            $.fancybox({ padding: 0, width: 600, height: 300, href: "MapPreferences.aspx?tkn=" + MapSettings.User.Session.getSessionToken(), type: 'iframe' });
+            return false;
+        });
+
+        if ($('.logged-in-user').length) {
+            $('.messagecenterheaderwidget').messageCenterHeaderWidget();
+
+            var $userMenuBtn = $('.logged-in-user .li-user-toggle');
+
+            $userMenuBtn.on('touchstart click', function (e) {
+                e.stopPropagation();
+                $(this).next('ul').addClass('user-expanded');
+            });
+
+            $(document).on('touchstart click', function (e) {
+                // close profile nav menu
+                if ($('.user-expanded').length && !$(e.target).parents().hasClass("user-expanded")) {
+                    $('.user-expanded').removeClass("user-expanded");
+                }
+            });
+        }
+
+        function showSetHomeLocation() {
+            $.modalEvents({
+                callbacks: {
+                    close: function () {
+                        $.fancybox.close();
+                    },
+                    save: function () {
+                        window.location.href = window.location.pathname;
+                    }
+                }
+            });
+
+            $.fancybox({
+                width: 520,
+                height: 540,
+                autoScale: false,
+                padding: 0,
+                margin: 0,
+                href: "/account/homelocation/modal",
+                scrolling: 'yes',
+                type: "iframe",
+                modal: true
+            });
+        };
+
+        function showPremiumUpsell() {
+            $.fancybox({
+                width: 780,
+                height: 500,
+                autoScale: false,
+                padding: 0,
+                margin: 0,
+                href: "/account/account_upsell.aspx?tab=google",
+                scrolling: 'no',
+                type: "iframe"
+            });
+        };
+
+    </script>
+    <script id="btnMapRedirect" type="text/html">
+        <div class="search-control">
+            <a href="#" class="btn-map" id="lnk_fullmap">Clear Search Filters</a>
+        </div>
+    </script>
+    <script id="cachePopupTemplate" type="text/x-jquery-tmpl">
+        <div id="gmCacheInfo">
+            <div id="box">
+                {{each data tmpl="#cacheDetailsTemplate"}}
+            </div>
+        </div>
+    </script>
+    <script id="cacheDetailsTemplate" type="text/x-jquery-tmpl">
+        <div class='map-item map-item-row-{{=$itemNumber!}}' style='display:{{=$ctx.hideItem($view)}};'>
+            <div class="code">{{=gc}}</div>
+            <h4>
+                <img src="../images/WptTypes/sm/{{=type.value}}.gif">
+                <a target="_blank" href="/seek/cache_details.aspx?wp={{=gc}}">{{= $ctx.formatCacheName(name, available, archived)!}}</a>
+            </h4>
+            <dl style="float:left;margin-right:2em;width:50%;">
+                <dt>Created by:</dt>
+                <dd><a target="_blank" href="/profile/?guid={{=owner.Value}}">{{=owner.text}}</a></dd>
+                <dt>Difficulty:</dt>
+                <dd><img alt="{{=difficulty.text}} out of 5" title="{{=difficulty.text}} out of 5" src="../images/stars/stars{{=difficulty.value}}.gif">&nbsp;</dd>
+                <dt>Cache Size:</dt>
+                <dd><img title="Size: {{=container.text}}" alt="#" src="../images/icons/container/{{=container.value}}"></dd>
+            </dl>
+            <dl style="margin-left:50%">
+                <dt>Date Hidden:</dt>
+                <dd>{{=hidden}}</dd>
+                <dt>Terrain:</dt>
+                <dd><img alt="{{=terrain.text}} out of 5" title="{{=terrain.text}} out of 5" src="../images/stars/stars{{=terrain.value}}.gif">&nbsp;</dd>
+                <dt>Favorite Points:</dt>
+                <dd><img src="/images/icons/16/favorites.png" />{{=fp!}}</dd>
+            </dl>
+            <div class="links Clear">
+                {{#if $ctx.userIsLoggedIn() }}
+                <a class="lnk" href="/bookmarks/mark.aspx?guid={{=g}}&WptTypeID={{=type.Value}}" target="_blank">
+                    <img src="/images/icons/16/bookmark_list.png"><span>Bookmark It</span>
+                </a>
+                {{#if $ctx.userCorrectSubscriberLevel(subrOnly) }}
+                <a class="lnk send2gps" href="#" data-guid="{{=g}}" onclick="return send2gps(this);">
+                    <img src="/images/icons/16/send_to_gps.png"><span>Send to GPS</span>
+                </a>
+                {{else}}
+                <span disabled="disabled"><img src="/images/icons/16/send_to_gps.png"> Send to GPS</span>
+                {{/if}}
+                <a class="lnk" href="/seek/log.aspx?guid={{=g}}" target="_blank">
+                    <img src="/images/icons/16/write_log.png"><span>Log Visit</span>
+                </a>
+                {{else}}
+                {{=$ctx.upsellText()!}}
+                {{/if}}
+            </div>
+            <div class="links Clear">
+                {{=$itemNumber!}} of {{=$ctx.totalRecords($view)}} nearby results &middot;
+                {{#if $ctx.isFirst($view)}} &lt; Prev {{#else}} <a href='#' class='prev-item' data-next-id='{{=$itemNumber!}}'>&lt; Prev</a> {{/if}} |
+                {{#if $ctx.isLast($view)}} Next &gt; {{else}} <a href='#' class='next-item' data-next-id='{{=$ctx.nextID($view)}}'>Next &gt;</a> {{/if}}
+            </div>
+        </div>
+    </script>
+    <script id="cacheDetailsTemplateScripts" type="text/javascript">
+        var cacheDetailsTemplate = {
+            isDisabled: function (item) {
+                return item.data.cache.available ? '' : 'disabled-cache';
+            }
+        };
+    </script>
+    <script id="loc_upsellcontent" type="text/html">
+        <a href="https://www.geocaching.com/login/default.aspx?RESET=Y&redir=http%3a%2f%2fwww.geocaching.com%2fmap%2fbeta%2f">Login</a> to your Premium Member account or
+        <a href="/premium">learn more</a> about Premium Membership.
+    </script>
+</body>
+</html>

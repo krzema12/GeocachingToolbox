@@ -1,10 +1,10 @@
-﻿using OAuth;
-using System;
+﻿using System;
+using OAuth;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
+using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace GeocachingToolbox.Opencaching
@@ -109,18 +109,24 @@ namespace GeocachingToolbox.Opencaching
             return s;
         }
 
-        public async Task<string> GetResponse(string url)
+        public async Task<string> GetResponse(string url, CancellationToken ct)
         {
             try
             {
-                WebRequest request = WebRequest.Create(url);
-                //request.Timeout = 15000;
-                request.Proxy = null;
+                var client = new HttpClient();
+                var data = await client.GetAsync(url, HttpCompletionOption.ResponseContentRead, ct);
 
-                using (WebResponse response = await request.GetResponseAsync())
-                {
-                    return ReadResponse(response);
-                }
+                return await data.Content.ReadAsStringAsync();
+
+
+                //WebRequest request = WebRequest.Create(url);
+                ////request.Timeout = 15000;
+                //request.Proxy = null;
+
+                //using (WebResponse response = await request.GetResponseAsync())
+                //{
+                //    return ReadResponse(response);
+                //}
             }
             catch (WebException)
             {

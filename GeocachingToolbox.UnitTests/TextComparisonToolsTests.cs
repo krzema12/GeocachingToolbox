@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Machine.Specifications;
+﻿using Machine.Specifications;
 
 namespace GeocachingToolbox.UnitTests
 {
@@ -28,15 +23,4 @@ namespace GeocachingToolbox.UnitTests
         It should_return_two_if_one_string_empty = () =>
             _result.ShouldEqual(2.0f);
     }
-
-    /*public class StringsCompletelyDifferent
-    {
-        private static float _result;
-
-        Because of = () =>
-            _result = TextComparisonTools.NormalizedEditDistance("abcdefg", "hijklmn");
-
-        It should_return_one_if_strings_completely_different = () =>
-            _result.ShouldEqual(1.0f);
-    }*/
 }

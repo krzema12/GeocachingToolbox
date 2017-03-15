@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Machine.Specifications;
-using Rhino.Mocks;
-using GeocachingToolbox.Opencaching;
-
-namespace GeocachingToolbox.UnitTests.Opencaching
+﻿namespace GeocachingToolbox.UnitTests.Opencaching
 {
     //[Subject("Getting a nonempty list of logs of found geocaches")]
     //public class GetUserInformation

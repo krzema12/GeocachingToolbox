@@ -3,7 +3,6 @@ using GeocachingToolbox.GeocachingCom;
 using Machine.Specifications;
 using Rhino.Mocks;
 using System;
-using System.Security.Cryptography.X509Certificates;
 
 namespace GeocachingToolbox.UnitTests.GeocachingCom
 {
@@ -16,6 +15,9 @@ namespace GeocachingToolbox.UnitTests.GeocachingCom
         {
             _stubConnector = MockRepository.GenerateMock<IGCConnector>();
             _gcClient = new GCClient(_stubConnector);
+
+            _stubConnector.Expect(x => x.GetPage(GCConstants.PREFERENCE_URL))
+            .ReturnContentOf(@"GeocachingCom\WebpageContents\Preferences.html").Repeat.Once();
         };
     }
 
@@ -28,8 +30,8 @@ namespace GeocachingToolbox.UnitTests.GeocachingCom
                 .ReturnContentOf(@"GeocachingCom\WebpageContents\LoginSuccessfulAndUserProfile.html").Repeat.Once();
         };
 
-        Because of = async() =>
-            await _gcClient.Login("Krzema", "CorrectPassword");
+        Because of = () =>
+             _gcClient.Login("Krzema", "CorrectPassword").Await();
 
         It should_call_connectors_Login_method = () =>
             _stubConnector.VerifyAllExpectations();
@@ -38,6 +40,29 @@ namespace GeocachingToolbox.UnitTests.GeocachingCom
         It should_assign_number_of_found_geocaches_to_appropriate_field = () =>
             _gcClient.User.FoundGeocachesCount.ShouldEqual(153);
     }
+
+
+    [Subject("Logging in to Geocaching.com")]
+    public class CorrectCredentials_With_0Caches_Found: LoginTestsBase
+    {
+        Establish context = () =>
+        {
+            _stubConnector.Expect(x => x.Login(Arg<string>.Is.Anything, Arg<string>.Is.Anything))
+                .ReturnContentOf(@"GeocachingCom\WebpageContents\LoginSuccessfulAndUserProfileWith0CacheFound.html").Repeat.Once();
+        };
+
+        Because of = () =>
+             _gcClient.Login("plawi", "CorrectPassword").Await();
+
+        It should_call_connectors_Login_method = () =>
+            _stubConnector.VerifyAllExpectations();
+        It should_assign_user_name_to_appropriate_field = () =>
+            _gcClient.User.Name.ShouldEqual("plawi");
+        It should_assign_number_of_found_geocaches_to_appropriate_field = () =>
+            _gcClient.User.FoundGeocachesCount.ShouldEqual(0);
+    }
+
+
 
     [Subject("Logging in to Geocaching.com")]
     public class IncorrectCredentials : LoginTestsBase
